@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+pyautogen
+llama-index
+llama-index-embeddings-huggingface  # avoid unnecessary packages
