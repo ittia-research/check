@@ -12,11 +12,15 @@ config_list_openai = [{"model": "gpt-4o-mini", "api_key": os.environ.get("OPENAI
 About models:
   - Gemma 2 does not support system rule
 
+config_list:
+  - {"price": [prompt_price_per_1k, completion_token_price_per_1k]}
+  
 Todo:
   - With xinference + Gemma 2 + AutoGen, why 'system message' does not work well
 """
 config_list_local = [
-    {"model": "gemma-2-it", "base_url": os.environ.get("LLM_LOCAL_BASE_URL"), "tags": ["gemma", "local"]},
+    # set prices, otherwise there will be warnings
+    {"model": "gemma-2-it", "base_url": os.environ.get("LLM_LOCAL_BASE_URL"), "tags": ["gemma", "local"], "price": [0.1, 0.2]},
 ]
 
 llm_config = {"config_list": config_list_local}
