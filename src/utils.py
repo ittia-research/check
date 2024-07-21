@@ -153,3 +153,25 @@ def generate_report_html(input_text, verdicts):
 
     html_str = "\n".join(html)
     return html_str
+
+def check_input(input_string):
+    """
+    Check if the input are checkable.
+
+    :return: False if not readable, True otherwise.
+    """
+    
+    if input_string in ["robots.txt", "favicon.ico"]:
+        return False
+    
+    # Does not support image search
+    image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.svg']
+    if any(input_string.lower().endswith(ext) for ext in image_extensions):
+        return False
+    
+    # Check if the string ends with any non-nature-language file extensions
+    non_human_readable_extensions = ['.css', '.js', '.woff', '.woff2', '.ttf', '.eot']
+    if any(input_string.lower().endswith(ext) for ext in non_human_readable_extensions):
+        return False
+        
+    return True
