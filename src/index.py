@@ -1,6 +1,9 @@
+import gc, torch
+
 from llama_index.core import (
     Document,
     ServiceContext,
+    Settings,
     StorageContext,
     VectorStoreIndex,
     load_index_from_storage,
@@ -9,6 +12,8 @@ from llama_index.core.node_parser import HierarchicalNodeParser, get_leaf_nodes
 from llama_index.core.retrievers import AutoMergingRetriever
 from llama_index.core.indices.postprocessor import SentenceTransformerRerank
 from llama_index.core.query_engine import RetrieverQueryEngine
+
+Settings.llm = None  # retrieve only, do not use LLM for synthesize
 
 def build_automerging_index(
     documents,
@@ -47,6 +52,7 @@ def get_automerging_query_engine(
     auto_merging_engine = RetrieverQueryEngine.from_args(
         retriever, node_postprocessors=[rerank]
     )
+
     return auto_merging_engine
 
 def nodes2list(nodes):
@@ -69,10 +75,20 @@ def get_contexts(statement, keywords, text):
     index = build_automerging_index(
         [document],
         llm=None,
-    )  # todo: any resources waste here?
+    )  # todo: will it better to use retriever directly?
     
     query_engine = get_automerging_query_engine(index, similarity_top_k=12)
     query = f"{keywords} | {statement}"  # todo: better way
     auto_merging_response = query_engine.query(query)
     contexts = nodes2list(auto_merging_response.source_nodes)
+
+    # Deleting objects to free VRAM
+    del auto_merging_response
+    del query_engine
+    del index
+    gc.collect()
+
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    
     return contexts
