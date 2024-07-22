@@ -1,4 +1,6 @@
-True, or false, or just opnions? Maybe not binary but percentage.
+True, false, or just opinions? Maybe not binary, but a percentage.
+
+Fact-checking tools to combat disinformation.
 
 ## Design
 Input something.
@@ -8,8 +10,18 @@ Factcheck like what a researcher will do:
 Output analysis:
   1. MARKDOWN as the default format, JSON as one option. 
 
-### Pholosophy
-For new information, doubts as default, factcheck follows.
+Pholosophy:
+- For new information, doubts as default, factcheck follows.
+
+## Get Started
+Online demo: https://check.ittia.net
+* Due to limited GPU resources, availbility of this demo are limited.
+
+## Support
+Please contact if you can provide resources for this project:
+- AI API access
+- Hardware for hosting
+- Data sources
 
 ### Elements
 Input types:
@@ -36,36 +48,30 @@ Verdits:
 - [ ] Add support for URL input
 - [ ] Performance benchmark.
 
-#### LLM
-- [ ] Better way to handle LLM output formats: list, JSON.
+LLM
+- [ ] Better way to handle LLM output formating: list, JSON.
 
-#### Contexts
+Contexts
 - [ ] Filter out non-related contexts before send for verdict
 
 ### Toolchain
 - [ ] Evaluate data quality of searching and url fetching. Better error handle.
-- [ ] Use multiple sources for fact check.
+- [ ] Use multiple sources for factcheck.
 
 ### Extend
 - [ ] To other types of media: image, audio, video, etc.
 - [ ] Shall we try to anser questions if provided.
 - [ ] Multi-language support.
 - [ ] Add logging and long-term memory.
-- [ ] Intergrate with other fact check services.
+- [ ] Intergrate with other factcheck services.
 
 ### Calculate
 - [ ] Shall we calculate percentage of true and false in the input? Any better calculation than items count?
 
-## Support
-Please contact if you can provide resources for this project:
-- AI API credits
-- Direct finance support
-- Data sources
-
 ## References
 ### Reports
 - [ ] AI-generated misinformation
-### Fact Check
+### Factcheck
 - https://www.bmi.bund.de/SharedDocs/schwerpunkte/EN/disinformation/examples-of-russian-disinformation-and-the-facts.html
 
 ## Thanks
