@@ -20,7 +20,7 @@ Todo:
 """
 config_list_local = [
     # set prices, otherwise there will be warnings
-    {"model": "gemma-2-it", "base_url": os.environ.get("LLM_LOCAL_BASE_URL"), "tags": ["gemma", "local"], "price": [0.1, 0.2]},
+    {"model": "gemma2:9b-instruct-q6_K", "base_url": os.environ.get("OLLAMA_BASE_URL") + "/v1", "tags": ["gemma", "local"], "price": [0, 0]},
 ]
 
 llm_config = {"config_list": config_list_local}

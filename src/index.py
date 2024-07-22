@@ -1,4 +1,4 @@
-import gc, torch
+import gc, torch, os
 
 from llama_index.core import (
     Document,
@@ -15,13 +15,22 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 
 Settings.llm = None  # retrieve only, do not use LLM for synthesize
 
+import llama_index.postprocessor.jinaai_rerank.base as jinaai_rerank  # todo: shall we lock package version?
+jinaai_rerank.API_URL = os.environ.get("LLM_LOCAL_BASE_URL") + "/rerank"  # switch to on-premise
+
+from llama_index.embeddings.ollama import OllamaEmbedding
+
 def build_automerging_index(
     documents,
     llm,
-    embed_model="local:BAAI/bge-small-en-v1.5",
+    # embed_model="local:BAAI/bge-small-en-v1.5",
     chunk_sizes=None,
 ):
     chunk_sizes = chunk_sizes or [2048, 512, 128]
+    embed_model = OllamaEmbedding(
+        model_name="jina/jina-embeddings-v2-base-en",
+        base_url=os.environ.get("OLLAMA_BASE_URL"),  # todo: any other configs here?
+    )
     node_parser = HierarchicalNodeParser.from_defaults(chunk_sizes=chunk_sizes)
     nodes = node_parser.get_nodes_from_documents(documents)
     leaf_nodes = get_leaf_nodes(nodes)
@@ -46,9 +55,10 @@ def get_automerging_query_engine(
     retriever = AutoMergingRetriever(
         base_retriever, automerging_index.storage_context, verbose=True
     )
-    rerank = SentenceTransformerRerank(
-        top_n=rerank_top_n, model="BAAI/bge-reranker-base"
-    )
+    # rerank = SentenceTransformerRerank(
+    #     top_n=rerank_top_n, model="BAAI/bge-reranker-base"
+    # )
+    rerank = jinaai_rerank.JinaRerank(api_key='', top_n=rerank_top_n, model="jina-reranker-v2")
     auto_merging_engine = RetrieverQueryEngine.from_args(
         retriever, node_postprocessors=[rerank]
     )

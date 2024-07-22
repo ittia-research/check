@@ -33,7 +33,6 @@ def fact_check(input):
         search = utils.search(keywords)
         if not search:
             continue
-        logger.info(f"search: {search}")
         contexts = index.get_contexts(statement, keywords, search)
         if not contexts:
             continue
@@ -46,7 +45,7 @@ def fact_check(input):
     if not verdicts:
         raise HTTPException(status_code=status, detail="No verdicts found")
 
-    report = utils.generate_report_html(input, verdicts)
+    report = utils.generate_report_markdown(input, verdicts)
     return report
 
 app = FastAPI()
@@ -61,9 +60,9 @@ async def catch_all(path: str):
         if not utils.check_input(path):
             return HTMLResponse(status_code=404, content="Invalid request")  # filter brower background requests
         result = fact_check(path)
-        return HTMLResponse(content=result)
+        return result  # HTMLResponse(content=result)
     except HTTPException as e:
         raise e
     except Exception as e:
         logger.error(f"Failed generate reports: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Service not available")
