@@ -188,9 +188,9 @@ def check_input(input_string):
     return True
 
 def get_homepage():
-    md = f"""For preview only!
+    md = f"""(preview only)
 
-Fact check API
+Fact-check API
 
 [Usage] {os.environ.get("HOSTING_CHECK_BASE_URL")}/YOUR_FACT_CHECK_QUERY
 """
