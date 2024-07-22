@@ -1,5 +1,6 @@
 import re, json, ast, os
 import aiohttp
+import itertools
 import logging
 
 logger = logging.getLogger(__name__)
@@ -165,26 +166,26 @@ def generate_report_html(input_text, verdicts):
     html_str = "\n".join(html)
     return html_str
 
-def check_input(input_string):
+def check_input(input):
     """
     Check if the input are checkable.
 
     :return: False if not readable, True otherwise.
     """
-    
-    if input_string in ["favicon.ico"]:
+
+    # check invalid whole query
+    invalid_path = ['YOUR_FACT_CHECK_QUERY']
+    common_web_requests = ["favicon.ico"]
+    if input in itertools.chain(invalid_path, common_web_requests):
         return False
     
-    # Does not support image search
-    image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.svg']
-    if any(input_string.lower().endswith(ext) for ext in image_extensions):
+    # check query of unsupported files
+    doc_ext = ['.html', '.htm', '.json', '.xml', '.txt']
+    image_ext = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.svg', '.webp']
+    not_nature_language_ext = ['.css', '.js', '.php', '.asp', '.aspx', '.woff', '.woff2', '.ttf', '.eot', '.otf']
+    if any(input.lower().endswith(ext) for ext in itertools.chain(doc_ext, image_ext, not_nature_language_ext)):
         return False
     
-    # Check if the string ends with any non-nature-language file extensions
-    non_human_readable_extensions = ['.css', '.js', '.woff', '.woff2', '.ttf', '.eot']
-    if any(input_string.lower().endswith(ext) for ext in non_human_readable_extensions):
-        return False
-        
     return True
 
 def get_homepage():
