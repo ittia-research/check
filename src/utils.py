@@ -1,5 +1,5 @@
 import re, json, ast, os
-import requests
+import aiohttp
 import logging
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ def llm2json(text):
         pass
     return json_object
     
-def search(keywords):
+async def search(keywords):
     """
     Constructs a URL from given keywords and search via Jina Reader.
 
@@ -43,16 +43,19 @@ def search(keywords):
         "Accept": "application/json"
     }
 
-    try:
-        response = requests.get(constructed_url, headers=headers).json()
-        if response.get('code') != 200:
-            raise Exception("Search return code not 200")
-        text = "\n\n".join([doc['content'] for doc in response['data']])
-        response = clear_md_links(text)
-    except Exception as e:
-        logger.error(f"Search '{keywords}' failed: {e}")
-        response = ''
-    return response
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(constructed_url, headers=headers) as response:
+                response_data = await response.json()
+                if response_data.get('code') != 200:
+                    raise Exception("Search return code not 200")
+                text = "\n\n".join([doc['content'] for doc in response_data['data']])
+                result = clear_md_links(text)
+        except Exception as e:
+            logger.error(f"Search '{keywords}' failed: {e}")
+            result =  ''
+            
+    return result
 
 def clear_md_links(md_content):
     """
@@ -169,7 +172,7 @@ def check_input(input_string):
     :return: False if not readable, True otherwise.
     """
     
-    if input_string in ["robots.txt", "favicon.ico"]:
+    if input_string in ["favicon.ico"]:
         return False
     
     # Does not support image search

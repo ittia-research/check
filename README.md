@@ -36,6 +36,9 @@ Verdits:
 - [ ] Add support for URL input
 - [ ] Performance benchmark.
 
+#### LLM
+- [ ] Better way to handle LLM output formats: list, JSON.
+
 #### Contexts
 - [ ] Filter out non-related contexts before send for verdict
 

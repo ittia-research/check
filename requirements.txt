@@ -1,6 +1,7 @@
+aiohttp
 fastapi
-uvicorn
-pyautogen
 llama-index
-llama-index-postprocessor-jinaai-rerank
 llama-index-embeddings-ollama
+llama-index-postprocessor-jinaai-rerank
+pyautogen
+uvicorn
