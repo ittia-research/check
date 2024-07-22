@@ -78,9 +78,12 @@ Statement:
 def get_verdict(statement, contexts):
     # This prompt allows model to use their own knowedge
     system_message = '''You are a helpful AI assistant.
-Solve tasks using your fact check skills.
-You will be given a statement follows by some contexts.
-Use the contexts to check if the statement are true, false, or uncheckable.
+Solve tasks using your fact-check skills.
+You will be given a statement followed by some contexts.
+Use the contexts and facts you know to check if the statements are true, false, or uncheckable.
+Ignore contexts that are irrelevant or stale.
+Provide detailed reasons for your verdict, ensuring that each reason is supported by corresponding facts.
+Be thorough in your explanations, avoiding any duplication of information.
 Provide the response as JSON with the structure:{verdict, reason}'''
     
     fact_check_agent = AssistantAgent(

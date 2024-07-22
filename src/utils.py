@@ -175,3 +175,10 @@ def check_input(input_string):
         return False
         
     return True
+
+def get_homepage():
+    md = """For preview only!
+
+[Usage] https://check.ittia.net/YOUR_FACT_CHECK_QUERY
+"""
+    return md

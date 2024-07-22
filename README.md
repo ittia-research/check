@@ -36,6 +36,9 @@ Verdits:
 - [ ] Add support for URL input
 - [ ] Performance benchmark.
 
+#### Contexts
+- [ ] Filter out non-related contexts before send for verdict
+
 ### Toolchain
 - [ ] Evaluate data quality of searching and url fetching. Better error handle.
 - [ ] Use multiple sources for fact check.

@@ -1,4 +1,7 @@
-import gc, torch, os
+"""
+llama-index
+"""
+import os
 
 from llama_index.core import (
     Document,
@@ -18,6 +21,7 @@ Settings.llm = None  # retrieve only, do not use LLM for synthesize
 import llama_index.postprocessor.jinaai_rerank.base as jinaai_rerank  # todo: shall we lock package version?
 jinaai_rerank.API_URL = os.environ.get("LLM_LOCAL_BASE_URL") + "/rerank"  # switch to on-premise
 
+# todo: high lantency between client and the ollama embedding server will slow down embedding a lot
 from llama_index.embeddings.ollama import OllamaEmbedding
 
 def build_automerging_index(
@@ -92,13 +96,4 @@ def get_contexts(statement, keywords, text):
     auto_merging_response = query_engine.query(query)
     contexts = nodes2list(auto_merging_response.source_nodes)
 
-    # Deleting objects to free VRAM
-    del auto_merging_response
-    del query_engine
-    del index
-    gc.collect()
-
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-    
     return contexts

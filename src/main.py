@@ -57,6 +57,8 @@ async def startup_event():
 @app.get("/{path:path}", response_class=PlainTextResponse)
 async def catch_all(path: str):
     try:
+        if not path:
+            return utils.get_homepage()
         if not utils.check_input(path):
             return HTMLResponse(status_code=404, content="Invalid request")  # filter brower background requests
         result = fact_check(path)
