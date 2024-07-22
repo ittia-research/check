@@ -3,27 +3,20 @@ True, false, or just opinions? Maybe not binary, but a percentage.
 Fact-checking tools to combat disinformation.
 
 ## Design
-1. Input something.
-2. Analize percentage of facts and opnions.
-3. Factcheck like what a researcher will do:
+Input something.
+
+Analize percentage of facts and opnions.
+
+Factcheck like what a researcher will do:
   * Use search engine as data source and AI as the verdit.
-4. Output analysis:
+
+Output analysis:
   * MARKDOWN as the default format, JSON as one option. 
 
-Pholosophy:
+### Pholosophy:
 - For new information, doubts as default, factcheck follows.
 
-## Get Started
-Online demo: https://check.ittia.net
-* Due to limited GPU resources, availbility of this demo are limited.
-
-## Support
-Please contact if you can provide resources for this project:
-- AI API access
-- Hardware for hosting
-- Data sources
-
-## Elements
+### Elements
 Input types:
 - facts
 - opnions
@@ -34,6 +27,16 @@ Verdits:
 - false
 - uncheckable: can't check without more background
 - unavailable: service unavailable
+
+## Get Started
+Online demo: https://check.ittia.net
+* Due to limited GPU resources, availbility of this demo are limited.
+
+## Support
+Please contact if you can provide resources for this project:
+- AI API access
+- Hardware for hosting
+- Data sources
 
 ## Todo
 ### Frontend
