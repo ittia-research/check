@@ -192,6 +192,6 @@ def get_homepage():
 
 Fact check API
 
-[Usage] {HOSTING_CHECK_BASE_URL}/YOUR_FACT_CHECK_QUERY
+[Usage] {os.environ.get("HOSTING_CHECK_BASE_URL")}/YOUR_FACT_CHECK_QUERY
 """
     return md
