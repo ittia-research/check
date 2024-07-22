@@ -3,12 +3,12 @@ True, false, or just opinions? Maybe not binary, but a percentage.
 Fact-checking tools to combat disinformation.
 
 ## Design
-Input something.
-Analize percentage of facts and opnions.
-Factcheck like what a researcher will do:
-  1. Use search engine as data source and AI as the verdit.
-Output analysis:
-  1. MARKDOWN as the default format, JSON as one option. 
+1. Input something.
+2. Analize percentage of facts and opnions.
+3. Factcheck like what a researcher will do:
+  * Use search engine as data source and AI as the verdit.
+4. Output analysis:
+  * MARKDOWN as the default format, JSON as one option. 
 
 Pholosophy:
 - For new information, doubts as default, factcheck follows.
@@ -23,7 +23,7 @@ Please contact if you can provide resources for this project:
 - Hardware for hosting
 - Data sources
 
-### Elements
+## Elements
 Input types:
 - facts
 - opnions
