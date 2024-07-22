@@ -188,8 +188,10 @@ def check_input(input_string):
     return True
 
 def get_homepage():
-    md = """For preview only!
+    md = f"""For preview only!
 
-[Usage] https://check.ittia.net/YOUR_FACT_CHECK_QUERY
+Fact check API
+
+[Usage] {HOSTING_CHECK_BASE_URL}/YOUR_FACT_CHECK_QUERY
 """
     return md
