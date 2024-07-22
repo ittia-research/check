@@ -22,6 +22,7 @@ def fact_check(input):
         raise HTTPException(status_code=status, detail="No statements found")
 
     verdicts = []
+    fail_search = False
     for statement in statements:
         if not statement:
             continue
@@ -32,6 +33,7 @@ def fact_check(input):
         logger.info(f"keywords: {keywords}")
         search = utils.search(keywords)
         if not search:
+            fail_search = True
             continue
         contexts = index.get_contexts(statement, keywords, search)
         if not contexts:
@@ -43,7 +45,10 @@ def fact_check(input):
         verdicts.append(verdict)
 
     if not verdicts:
-        raise HTTPException(status_code=status, detail="No verdicts found")
+        if fail_search:
+            raise HTTPException(status_code=status, detail="Search not available")
+        else:
+            raise HTTPException(status_code=status, detail="No verdicts found")
 
     report = utils.generate_report_markdown(input, verdicts)
     return report

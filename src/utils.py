@@ -1,4 +1,4 @@
-import re, json, ast
+import re, json, ast, os
 import requests
 import logging
 
@@ -38,9 +38,17 @@ def search(keywords):
     """
     base_url = 'https://s.jina.ai/'
     constructed_url = base_url + keywords
+
+    headers = {
+        "Accept": "application/json"
+    }
+
     try:
-        response = requests.get(constructed_url)
-        response = clear_md_links(response.text)
+        response = requests.get(constructed_url, headers=headers).json()
+        if response.get('code') != 200:
+            raise Exception("Search return code not 200")
+        text = "\n\n".join([doc['content'] for doc in response['data']])
+        response = clear_md_links(text)
     except Exception as e:
         logger.error(f"Search '{keywords}' failed: {e}")
         response = ''
