@@ -54,12 +54,19 @@ Please contact if you can provide resources for this project:
 LLM
 - [ ] Better way to handle LLM output formating: list, JSON.
 
+Embedding:
+- [ ] chunk size optimize
+- [ ] Ollama embedding performance
+
 Contexts
 - [ ] Filter out non-related contexts before send for verdict
 
 ### Toolchain
 - [ ] Evaluate data quality of searching and url fetching. Better error handle.
 - [ ] Use multiple sources for factcheck.
+
+### Stability
+- [ ] AI backend stress test, especially xinference.
 
 ### Extend
 - [ ] To other types of media: image, audio, video, etc.

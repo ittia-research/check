@@ -89,6 +89,7 @@ def get_contexts(statement, keywords, text):
     index = build_automerging_index(
         [document],
         llm=None,
+        chunk_sizes=[3072, 768, 192],
     )  # todo: will it better to use retriever directly?
     
     query_engine = get_automerging_query_engine(index, similarity_top_k=12)

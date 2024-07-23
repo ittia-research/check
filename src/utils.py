@@ -48,8 +48,9 @@ async def search(keywords):
         try:
             async with session.get(constructed_url, headers=headers) as response:
                 response_data = await response.json()
-                if response_data.get('code') != 200:
-                    raise Exception("Search return code not 200")
+                response_code = response_data.get('code')
+                if response_code != 200:
+                    raise Exception(f"Search response code: {response_code}")
                 text = "\n\n".join([doc['content'] for doc in response_data['data']])
                 result = clear_md_links(text)
         except Exception as e:
@@ -58,30 +59,21 @@ async def search(keywords):
             
     return result
 
-def clear_md_links(md_content):
+def clear_md_links(text):
     """
-    Removes all Markdown links from the document and keeps only the text.
-    Special handling for cases like [\[note 1\]](url) to keep 'note 1' text.
-
-    Args:
-    md_content (str): The Markdown content as a string.
-
-    Returns:
-    str: The Markdown content with links removed and only the text retained.
+    Removes:
+      - markdown links: keep `[text]`
+      - standalone URLs
     """
-    # General pattern to match Markdown links of the form [text](url)
-    general_link_pattern = re.compile(r'\[([^\]]+)\]\([^\)]+\)')
+    # match markdown links
+    pattern = r'\[([^\]]+)\]\([^\)]+\)'
+    text = re.sub(pattern, r'\1', text)
     
-    # Specific pattern to match cases like [\[note 1\]](url)
-    special_link_pattern = re.compile(r'\[\\\[(.*?)\\\]\]\([^\)]+\)')
-
-    # Replace the matched special links with the text inside double brackets
-    processed_content = re.sub(special_link_pattern, r'\1', md_content)
+    # match standalone URLs
+    pattern = r'http[s]?://[^\s]+'
+    text = re.sub(pattern, '', text)
     
-    # Replace the matched general links with just the link text
-    processed_content = re.sub(general_link_pattern, r'\1', processed_content)
-    
-    return processed_content
+    return text
 
 def generate_report_markdown(input_text, verdicts):
     markdown = []
