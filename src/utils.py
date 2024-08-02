@@ -5,6 +5,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+SEARCH_BASE_URL = os.environ.get("SEARCH_BASE_URL")
+
 def llm2list(text):
     list_obj = []
     try:
@@ -37,8 +39,7 @@ async def search(keywords):
     Todo:
       - Enhance response clear.
     """
-    base_url = 'https://s.jina.ai/'
-    constructed_url = base_url + keywords
+    constructed_url = SEARCH_BASE_URL + '/' + keywords
 
     headers = {
         "Accept": "application/json"
