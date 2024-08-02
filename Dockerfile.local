@@ -1,7 +1,7 @@
-FROM python:3.11-slim-bookworm
+FROM intel/intel-optimized-pytorch:2.3.0-serving-cpu
 WORKDIR /app
-COPY requirements.txt /app
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.local.txt /app
+RUN pip install --no-cache-dir -r requirements.local.txt
 COPY . /app
 EXPOSE 8000
 ENV NAME "Fact-check API"

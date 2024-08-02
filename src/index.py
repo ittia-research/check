@@ -69,8 +69,8 @@ def get_automerging_query_engine(
 
     if RAG_MODEL_DEPLOY == "local":
         rerank = SentenceTransformerRerank(
-            top_n=rerank_top_n, model="jinaai/jina-reranker-v2-base-multilingual"
-        )
+            top_n=rerank_top_n, model="BAAI/bge-reranker-v2-m3",
+        )  # todo: add support `trust_remote_code=True`
     else:
         rerank = jinaai_rerank.JinaRerank(api_key='', top_n=rerank_top_n, model="jina-reranker-v2")
     
