@@ -65,6 +65,10 @@ async def startup_event():
 @app.get("/robots.txt", response_class=FileResponse)
 async def robots():
     return "assets/robots.txt"
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
     
 @app.get("/{path:path}", response_class=PlainTextResponse)
 async def catch_all(path: str):
