@@ -62,6 +62,8 @@ Contexts
 - [ ] Filter out non-related contexts before send for verdict
 
 ### Toolchain
+- [ ] Evaluate MLOps pipeline
+  - https://kitops.ml
 - [ ] Evaluate data quality of searching and url fetching. Better error handle.
 - [ ] Use multiple sources for factcheck.
 
@@ -78,11 +80,17 @@ Contexts
 ### Calculate
 - [ ] Shall we calculate percentage of true and false in the input? Any better calculation than items count?
 
+## Issues
+- [ ] Uses many different types of models, diffcult for performance optimization and maintenance.
+
 ## References
 ### Reports
 - [ ] AI-generated misinformation
 ### Factcheck
 - https://www.bmi.bund.de/SharedDocs/schwerpunkte/EN/disinformation/examples-of-russian-disinformation-and-the-facts.html
+### Resources
+#### Inference
+- https://console.groq.com/docs/ (free tier)
 
 ## Thanks
 - Jina Reader: https://jina.ai

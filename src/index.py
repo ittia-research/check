@@ -24,17 +24,24 @@ jinaai_rerank.API_URL = os.environ.get("LLM_LOCAL_BASE_URL") + "/rerank"  # swit
 # todo: high lantency between client and the ollama embedding server will slow down embedding a lot
 from llama_index.embeddings.ollama import OllamaEmbedding
 
+# set RAG model deploy mode
+RAG_MODEL_DEPLOY = os.environ.get("RAG_MODEL_DEPLOY") or "local"
+
 def build_automerging_index(
     documents,
     llm,
-    # embed_model="local:BAAI/bge-small-en-v1.5",
     chunk_sizes=None,
 ):
     chunk_sizes = chunk_sizes or [2048, 512, 128]
-    embed_model = OllamaEmbedding(
-        model_name="jina/jina-embeddings-v2-base-en",
-        base_url=os.environ.get("OLLAMA_BASE_URL"),  # todo: any other configs here?
-    )
+
+    if RAG_MODEL_DEPLOY == "local":
+        embed_model="local:jinaai/jina-embeddings-v2-base-en"
+    else:
+        embed_model = OllamaEmbedding(
+            model_name="jina/jina-embeddings-v2-base-en",
+            base_url=os.environ.get("OLLAMA_BASE_URL"),  # todo: any other configs here?
+        )
+        
     node_parser = HierarchicalNodeParser.from_defaults(chunk_sizes=chunk_sizes)
     nodes = node_parser.get_nodes_from_documents(documents)
     leaf_nodes = get_leaf_nodes(nodes)
@@ -59,10 +66,14 @@ def get_automerging_query_engine(
     retriever = AutoMergingRetriever(
         base_retriever, automerging_index.storage_context, verbose=True
     )
-    # rerank = SentenceTransformerRerank(
-    #     top_n=rerank_top_n, model="BAAI/bge-reranker-base"
-    # )
-    rerank = jinaai_rerank.JinaRerank(api_key='', top_n=rerank_top_n, model="jina-reranker-v2")
+
+    if RAG_MODEL_DEPLOY == "local":
+        rerank = SentenceTransformerRerank(
+            top_n=rerank_top_n, model="jinaai/jina-reranker-v2-base-multilingual"
+        )
+    else:
+        rerank = jinaai_rerank.JinaRerank(api_key='', top_n=rerank_top_n, model="jina-reranker-v2")
+    
     auto_merging_engine = RetrieverQueryEngine.from_args(
         retriever, node_postprocessors=[rerank]
     )
