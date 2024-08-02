@@ -6,8 +6,6 @@ import utils
 
 logger = logging.getLogger(__name__)
 
-config_list_openai = [{"model": "gpt-4o-mini", "api_key": os.environ.get("OPENAI_API_KEY")}]
-
 """
 About models:
   - Gemma 2 does not support system rule
@@ -18,9 +16,10 @@ config_list:
 Todo:
   - With xinference + Gemma 2 + AutoGen, why 'system message' does not work well
 """
+LLM_MODEL_NAME = os.environ.get("LLM_MODEL_NAME") or "google/gemma-2-27b-it"
 config_list_local = [
     # set prices, otherwise there will be warnings
-    {"model": "gemma2:9b-instruct-q6_K", "base_url": os.environ.get("OLLAMA_BASE_URL") + "/v1", "tags": ["gemma", "local"], "price": [0, 0]},
+    {"model": LLM_MODEL_NAME, "base_url": os.environ.get("OLLAMA_BASE_URL") + "/v1", "tags": ["gemma", "local"], "price": [0, 0]},
 ]
 
 llm_config = {"config_list": config_list_local}
