@@ -16,14 +16,15 @@ llm_client = OpenAI(
     api_key="token",
 )
 
-def get_llm_reply(prompt):
-  completion = llm_client.chat.completions.create(
-    model=LLM_MODEL_NAME,
-    messages=[
-      {"role": "user", "content": prompt}
-    ]
-  )
-  return completion.choices[0].message.content
+def get_llm_reply(prompt, temperature=0):
+    completion = llm_client.chat.completions.create(
+        model=LLM_MODEL_NAME,
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=temperature,
+    )
+    return completion.choices[0].message.content
 
 """
 Get list of statements from input.
@@ -31,8 +32,8 @@ Get list of statements from input.
 def get_statements(input):
     system_message = '''You are a helpful AI assistant.
 Solve tasks using your fact extraction skills.
-Extract key facts from the given content.
-Provide a list of the facts in array format as response only.'''
+Extract key statements from the given content.
+Provide in array format as response only.'''
     
     prompt = f'''{system_message}
 ```
