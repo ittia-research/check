@@ -4,5 +4,5 @@ llama-index
 llama-index-embeddings-huggingface
 llama-index-embeddings-ollama
 llama-index-postprocessor-jinaai-rerank
-pyautogen
+openai
 uvicorn

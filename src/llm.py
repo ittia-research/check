@@ -1,28 +1,29 @@
 import os
-from autogen import AssistantAgent
+from openai import OpenAI
 import logging
 
 import utils
 
-logger = logging.getLogger(__name__)
-
 """
 About models:
   - Gemma 2 does not support system rule
-
-config_list:
-  - {"price": [prompt_price_per_1k, completion_token_price_per_1k]}
-  
-Todo:
-  - With xinference + Gemma 2 + AutoGen, why 'system message' does not work well
 """
-LLM_MODEL_NAME = os.environ.get("LLM_MODEL_NAME") or "google/gemma-2-27b-it"
-config_list_local = [
-    # set prices, otherwise there will be warnings
-    {"model": LLM_MODEL_NAME, "base_url": os.environ.get("OLLAMA_BASE_URL") + "/v1", "tags": ["gemma", "local"], "price": [0, 0]},
-]
 
-llm_config = {"config_list": config_list_local}
+LLM_MODEL_NAME = os.environ.get("LLM_MODEL_NAME") or "google/gemma-2-27b-it"
+
+llm_client = OpenAI(
+    base_url=os.environ.get("OPENAI_BASE_URL"),
+    api_key="token",
+)
+
+def get_llm_reply(prompt):
+  completion = llm_client.chat.completions.create(
+    model=LLM_MODEL_NAME,
+    messages=[
+      {"role": "user", "content": prompt}
+    ]
+  )
+  return completion.choices[0].message.content
 
 """
 Get list of statements from input.
@@ -33,21 +34,14 @@ Solve tasks using your fact extraction skills.
 Extract key facts from the given content.
 Provide a list of the facts in array format as response only.'''
     
-    statement_extract_agent = AssistantAgent(
-        name="statement_extract_agent",
-        system_message='',
-        llm_config=llm_config,
-        human_input_mode="NEVER",
-    )
-
-    content = f'''{system_message}
+    prompt = f'''{system_message}
 ```
 Content:
 {input}
 ```'''
     
-    reply = statement_extract_agent.generate_reply(messages=[{"content": content, "role": "user"}])
-    logger.debug(f"get_statements LLM reply: {reply}")
+    reply = get_llm_reply(prompt)
+    logging.debug(f"get_statements LLM reply: {reply}")
     return utils.llm2list(reply)
 
 """
@@ -59,19 +53,12 @@ Solve tasks using your searching skills.
 Generate search keyword used for fact check on the given statement.
 Include only the keyword in your response.'''
     
-    search_keywords_agent = AssistantAgent(
-        name="search_keywords_agent",
-        system_message='',
-        llm_config=llm_config,
-        human_input_mode="NEVER",
-    )
-
-    content = f'''{system_message}
+    prompt = f'''{system_message}
 ```
 Statement:
 {statement}
 ```'''
-    reply = search_keywords_agent.generate_reply(messages=[{"content": content, "role": "user"}])
+    reply = get_llm_reply(prompt)
     return reply.strip()
 
 def get_verdict(statement, contexts):
@@ -85,14 +72,7 @@ Provide detailed reasons for your verdict, ensuring that each reason is supporte
 Be thorough in your explanations, avoiding any duplication of information.
 Provide the response as JSON with the structure:{verdict, reason}'''
     
-    fact_check_agent = AssistantAgent(
-        name="fact_check_agent",
-        system_message='',
-        llm_config=llm_config,
-        human_input_mode="NEVER",
-    )
-    
-    content = f'''{system_message}
+    prompt = f'''{system_message}
 ```
 Statement:
 {statement}
@@ -103,13 +83,13 @@ Contexts:'''
         _text = node.get('text')
         if not _text:
             continue
-        content = f"""{content}
+        prompt = f"""{prompt}
     ```
     Context {ind + 1}:
     {_text}
     ```"""
     
-    reply = fact_check_agent.generate_reply(messages=[{"content": content, "role": "user"}])
+    reply = get_llm_reply(prompt)
     verdict = utils.llm2json(reply)
     if verdict:
         verdict['statement'] = statement
