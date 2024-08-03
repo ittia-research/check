@@ -80,6 +80,9 @@ Contexts
 ### Calculate
 - [ ] Shall we calculate percentage of true and false in the input? Any better calculation than items count?
 
+### Doc
+- [ ] Show current tech stack.
+
 ## Issues
 - [ ] Uses many different types of models, diffcult for performance optimization and maintenance.
 
