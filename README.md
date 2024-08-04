@@ -2,6 +2,9 @@ True, false, or just opinions? Maybe not binary, but a percentage.
 
 Fact-checking tools to combat disinformation.
 
+## Get Started
+Online demo: https://check.ittia.net
+
 ## Design
 Input something.
 
@@ -27,10 +30,6 @@ Verdits:
 - false
 - uncheckable: can't check without more background
 - unavailable: service unavailable
-
-## Get Started
-Online demo: https://check.ittia.net
-* Due to limited GPU resources, availbility of this demo are limited.
 
 ## Support
 Please contact if you can provide resources for this project:

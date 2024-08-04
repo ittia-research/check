@@ -69,12 +69,17 @@ async def robots():
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+@app.get("/status")
+async def status():
+    _status = await utils.get_status()
+    return _status
     
 @app.get("/{path:path}", response_class=PlainTextResponse)
 async def catch_all(path: str):
     try:
         if not path:
-            return utils.get_homepage()
+            return await utils.get_homepage()
         if not utils.check_input(path):
             return HTMLResponse(status_code=404, content="Invalid request")  # filter brower background requests
         result = await fact_check(path)
