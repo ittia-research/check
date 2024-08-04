@@ -1,24 +1,22 @@
-import os
 from openai import OpenAI
 import logging
 
 import utils
+from settings import settings
 
 """
 About models:
   - Gemma 2 does not support system rule
 """
 
-LLM_MODEL_NAME = os.environ.get("LLM_MODEL_NAME") or "google/gemma-2-27b-it"
-
 llm_client = OpenAI(
-    base_url=os.environ.get("OPENAI_BASE_URL"),
+    base_url=settings.OPENAI_BASE_URL,
     api_key="token",
 )
 
 def get_llm_reply(prompt, temperature=0):
     completion = llm_client.chat.completions.create(
-        model=LLM_MODEL_NAME,
+        model=settings.LLM_MODEL_NAME,
         messages=[
             {"role": "user", "content": prompt}
         ],

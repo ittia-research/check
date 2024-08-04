@@ -1,11 +1,9 @@
-import re, json, ast, os
+import re, json, ast
 import aiohttp
 import itertools
 import logging
 
-logger = logging.getLogger(__name__)
-
-SEARCH_BASE_URL = os.environ.get("SEARCH_BASE_URL")
+from settings import settings
 
 def llm2list(text):
     list_obj = []
@@ -16,7 +14,7 @@ def llm2list(text):
         if match:
             list_obj = ast.literal_eval(match.group())
     except Exception as e:
-        logger.warning(f"Failed convert LLM response to list: {e}")
+        logging.warning(f"Failed convert LLM response to list: {e}")
         pass
     return list_obj
 
@@ -28,7 +26,7 @@ def llm2json(text):
         if match:
             json_object = json.loads(match.group())
     except Exception as e:
-        logger.warning(f"Failed convert LLM response to JSON: {e}")
+        logging.warning(f"Failed convert LLM response to JSON: {e}")
         pass
     return json_object
     
@@ -39,7 +37,7 @@ async def search(keywords):
     Todo:
       - Enhance response clear.
     """
-    constructed_url = SEARCH_BASE_URL + '/' + keywords
+    constructed_url = settings.SEARCH_BASE_URL + '/' + keywords
 
     headers = {
         "Accept": "application/json"
@@ -55,7 +53,7 @@ async def search(keywords):
                 text = "\n\n".join([doc['content'] for doc in response_data['data']])
                 result = clear_md_links(text)
         except Exception as e:
-            logger.error(f"Search '{keywords}' failed: {e}")
+            logging.error(f"Search '{keywords}' failed: {e}")
             result =  ''
             
     return result
@@ -181,11 +179,35 @@ def check_input(input):
     
     return True
 
-def get_homepage():
-    md = f"""(preview only)
+async def get_homepage():
+    # get tech stack
+    stack = await get_stack()
+    md = f"## Tech stack:\n"
+    lines = [md]
+    lines.extend([f"{key}: {value}" for key, value in stack.items()])
+    md = "\n".join(lines)
+        
+    md = f"""Fact-check API
 
-Fact-check API
+[Usage] {settings.PROJECT_HOSTING_BASE_URL}/YOUR_FACT_CHECK_QUERY
 
-[Usage] {os.environ.get("HOSTING_CHECK_BASE_URL")}/YOUR_FACT_CHECK_QUERY
+{md}
 """
     return md
+
+async def get_stack():
+    # current tech stack
+    stack = {
+        "LLM model": settings.LLM_MODEL_NAME,
+        "Embedding model": settings.EMBEDDING_MODEL_NAME,
+        "Rerank model": settings.RERANK_MODEL_NAME,
+        "RAG deploy mode": settings.RAG_MODEL_DEPLOY,
+    }
+    return stack
+    
+async def get_status():
+    stack = await get_stack()
+    status = {
+        "stack": stack
+    }
+    return status

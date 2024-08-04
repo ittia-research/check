@@ -19,14 +19,13 @@ from llama_index.core.llms import MockLLM
 
 Settings.llm = MockLLM()  # retrieve only, do not use LLM for synthesize
 
+from settings import settings
+
 import llama_index.postprocessor.jinaai_rerank.base as jinaai_rerank  # todo: shall we lock package version?
-jinaai_rerank.API_URL = os.environ.get("LLM_LOCAL_BASE_URL") + "/rerank"  # switch to on-premise
+jinaai_rerank.API_URL = settings.RERANK_BASE_URL + "/rerank"  # switch to on-premise
 
 # todo: high lantency between client and the ollama embedding server will slow down embedding a lot
 from llama_index.embeddings.ollama import OllamaEmbedding
-
-# set RAG model deploy mode
-RAG_MODEL_DEPLOY = os.environ.get("RAG_MODEL_DEPLOY") or "local"
 
 def build_automerging_index(
     documents,
@@ -34,11 +33,11 @@ def build_automerging_index(
 ):
     chunk_sizes = chunk_sizes or [2048, 512, 128]
 
-    if RAG_MODEL_DEPLOY == "local":
-        embed_model="local:jinaai/jina-embeddings-v2-base-en"
+    if settings.RAG_MODEL_DEPLOY == "local":
+        embed_model="local:" + settings.EMBEDDING_MODEL_NAME
     else:
         embed_model = OllamaEmbedding(
-            model_name="jina/jina-embeddings-v2-base-en",
+            model_name=settings.EMBEDDING_MODEL_NAME,
             base_url=os.environ.get("OLLAMA_BASE_URL"),  # todo: any other configs here?
         )
         
@@ -66,12 +65,12 @@ def get_automerging_query_engine(
         base_retriever, automerging_index.storage_context, verbose=True
     )
 
-    if RAG_MODEL_DEPLOY == "local":
+    if settings.RAG_MODEL_DEPLOY == "local":
         rerank = SentenceTransformerRerank(
-            top_n=rerank_top_n, model="BAAI/bge-reranker-v2-m3",
+            top_n=rerank_top_n, model=settings.RERANK_MODEL_NAME,
         )  # todo: add support `trust_remote_code=True`
     else:
-        rerank = jinaai_rerank.JinaRerank(api_key='', top_n=rerank_top_n, model="jina-reranker-v2")
+        rerank = jinaai_rerank.JinaRerank(api_key='', top_n=rerank_top_n, model=settings.RERANK_MODEL_NAME)
     
     auto_merging_engine = RetrieverQueryEngine.from_args(
         retriever, node_postprocessors=[rerank]
