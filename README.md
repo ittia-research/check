@@ -99,5 +99,7 @@ Contexts
 #### Inference
 - https://console.groq.com/docs/ (free tier)
 
-## Thanks
-- Jina Reader: https://jina.ai
+## Acknowledgements
+- TPU Research Cloud team at Google
+- Google Search
+- Jina Reader
