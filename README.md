@@ -80,11 +80,15 @@ Contexts
 ### Calculate
 - [ ] Shall we calculate percentage of true and false in the input? Any better calculation than items count?
 
+### Logging
+- [ ] Full logging on chain of events for re-producing and debugging.
+
 ### Doc
 - [ ] Show current tech stack.
 
 ## Issues
 - [ ] Uses many different types of models, diffcult for performance optimization and maintenance.
+- [ ] LLM verdit wrong contradict to context provided.
 
 ## References
 ### Reports
@@ -95,5 +99,7 @@ Contexts
 #### Inference
 - https://console.groq.com/docs/ (free tier)
 
-## Thanks
-- Jina Reader: https://jina.ai
+## Acknowledgements
+- TPU Research Cloud team at Google
+- Google Search
+- Jina Reader

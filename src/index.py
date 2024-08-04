@@ -15,8 +15,9 @@ from llama_index.core.node_parser import HierarchicalNodeParser, get_leaf_nodes
 from llama_index.core.retrievers import AutoMergingRetriever
 from llama_index.core.indices.postprocessor import SentenceTransformerRerank
 from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_index.core.llms import MockLLM
 
-Settings.llm = None  # retrieve only, do not use LLM for synthesize
+Settings.llm = MockLLM()  # retrieve only, do not use LLM for synthesize
 
 import llama_index.postprocessor.jinaai_rerank.base as jinaai_rerank  # todo: shall we lock package version?
 jinaai_rerank.API_URL = os.environ.get("LLM_LOCAL_BASE_URL") + "/rerank"  # switch to on-premise
@@ -29,7 +30,6 @@ RAG_MODEL_DEPLOY = os.environ.get("RAG_MODEL_DEPLOY") or "local"
 
 def build_automerging_index(
     documents,
-    llm,
     chunk_sizes=None,
 ):
     chunk_sizes = chunk_sizes or [2048, 512, 128]
@@ -46,7 +46,6 @@ def build_automerging_index(
     nodes = node_parser.get_nodes_from_documents(documents)
     leaf_nodes = get_leaf_nodes(nodes)
     merging_context = ServiceContext.from_defaults(
-        llm=llm,
         embed_model=embed_model,
     )
     storage_context = StorageContext.from_defaults()
@@ -99,8 +98,7 @@ def get_contexts(statement, keywords, text):
     document = Document(text=text)
     index = build_automerging_index(
         [document],
-        llm=None,
-        chunk_sizes=[2048, 512],
+        chunk_sizes=[8192, 2048, 512],
     )  # todo: will it better to use retriever directly?
     
     query_engine = get_automerging_query_engine(index, similarity_top_k=16)

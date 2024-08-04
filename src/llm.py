@@ -91,6 +91,7 @@ Contexts:'''
     ```"""
     
     reply = get_llm_reply(prompt)
+    logging.info(f"Verdict reply from LLM: {reply}")
     verdict = utils.llm2json(reply)
     if verdict:
         verdict['statement'] = statement
