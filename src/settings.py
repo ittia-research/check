@@ -1,4 +1,4 @@
-import os
+import os, ast
 
 class Settings:
     def __init__(self):
@@ -15,4 +15,12 @@ class Settings:
         # set RAG model deploy mode
         self.RAG_MODEL_DEPLOY = os.environ.get("RAG_MODEL_DEPLOY") or "local"
 
+        # set RAG chunk sizes
+        self.RAG_CHUNK_SIZES = [4096, 1024, 256]
+        _chunk_sizes = os.environ.get("RAG_CHUNK_SIZES")
+        try:
+            self.RAG_CHUNK_SIZES = ast.literal_eval(_chunk_sizes)
+        except:
+            pass
+    
 settings = Settings()

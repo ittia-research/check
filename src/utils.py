@@ -191,6 +191,8 @@ async def get_homepage():
 
 [Usage] {settings.PROJECT_HOSTING_BASE_URL}/YOUR_FACT_CHECK_QUERY
 
+[Source] https://github.com/ittia-research/check
+
 {md}
 """
     return md
@@ -201,6 +203,7 @@ async def get_stack():
         "LLM model": settings.LLM_MODEL_NAME,
         "Embedding model": settings.EMBEDDING_MODEL_NAME,
         "Rerank model": settings.RERANK_MODEL_NAME,
+        "RAG chunk sizes": settings.RAG_CHUNK_SIZES,
         "RAG deploy mode": settings.RAG_MODEL_DEPLOY,
     }
     return stack
