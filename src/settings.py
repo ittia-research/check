@@ -12,11 +12,12 @@ class Settings:
         self.PROJECT_HOSTING_BASE_URL = os.environ.get("PROJECT_HOSTING_BASE_URL") or "https://check.ittia.net"
         self.SEARCH_BASE_URL = os.environ.get("SEARCH_BASE_URL") or "https://s.jina.ai"
 
-        # set RAG model deploy mode
-        self.RAG_MODEL_DEPLOY = os.environ.get("RAG_MODEL_DEPLOY") or "local"
+        # set RAG models deploy mode
+        self.EMBEDDING_MODEL_DEPLOY = os.environ.get("EMBEDDING_MODEL_DEPLOY") or "local"
+        self.RERANK_MODEL_DEPLOY = os.environ.get("RERANK_MODEL_DEPLOY") or "local"
 
         # set RAG chunk sizes
-        self.RAG_CHUNK_SIZES = [4096, 1024, 256]
+        self.RAG_CHUNK_SIZES = [1024, 256]
         _chunk_sizes = os.environ.get("RAG_CHUNK_SIZES")
         try:
             self.RAG_CHUNK_SIZES = ast.literal_eval(_chunk_sizes)

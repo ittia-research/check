@@ -32,7 +32,7 @@ def llm2json(text):
     
 async def search(keywords):
     """
-    Constructs a URL from given keywords and search via Jina Reader.
+    Search and get a list of websites content.
 
     Todo:
       - Enhance response clear.
@@ -46,17 +46,15 @@ async def search(keywords):
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(constructed_url, headers=headers) as response:
-                response_data = await response.json()
-                response_code = response_data.get('code')
-                if response_code != 200:
-                    raise Exception(f"Search response code: {response_code}")
-                text = "\n\n".join([doc['content'] for doc in response_data['data']])
-                result = clear_md_links(text)
+                rep = await response.json()
+                rep_code = rep.get('code')
+                if rep_code != 200:
+                    raise Exception(f"Search response code: {rep_code}")
         except Exception as e:
             logging.error(f"Search '{keywords}' failed: {e}")
-            result =  ''
+            rep =  {}
             
-    return result
+    return rep
 
 def clear_md_links(text):
     """
@@ -87,75 +85,11 @@ def generate_report_markdown(input_text, verdicts):
         markdown.append(f"### Statement {i}\n")
         markdown.append(f"**Statement**: {verdict['statement']}\n")
         markdown.append(f"**Verdict**: `{verdict['verdict']}`\n")
-        markdown.append(f"**Reason**: {verdict['reason']}\n")
+        markdown.append(f"**Weight**: {verdict['weights']['winning']} out of {verdict['weights']['valid']} ({verdict['weights']['irrelevant']} irrelevant)\n")
+        markdown.append(f"**Reason**:\n\n{verdict['reason']}\n")
 
     markdown_str = "\n".join(markdown)
     return markdown_str
-
-def generate_report_html(input_text, verdicts):
-    html = []
-
-    # Add basic HTML structure and styles
-    html.append("""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                margin: 20px;
-            }
-            h2 {
-                color: #2c3e50;
-            }
-            pre {
-                background-color: #f5f5f5;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                white-space: pre-wrap;
-            }
-            .verdict {
-                margin-bottom: 20px;
-            }
-            .statement {
-                font-weight: bold;
-                margin-top: 10px;
-            }
-            .verdict-label {
-                font-weight: bold;
-            }
-            .reason {
-                margin-top: 5px;
-            }
-        </style>
-    </head>
-    <body>
-    """)
-
-    # Add original input
-    html.append("<h2>Original Input</h2>\n")
-    html.append("<pre>" + input_text + "</pre>\n")
-
-    # Add verdicts
-    html.append("<h2>Fact Check</h2>\n")
-    for i, verdict in enumerate(verdicts, start=1):
-        html.append(f'<div class="verdict">\n')
-        html.append(f'<h3>Statement {i}</h3>\n')
-        html.append(f'<div class="statement">Statement: {verdict["statement"]}</div>\n')
-        html.append(f'<div class="verdict-label">Verdict: <code>{verdict["verdict"]}</code></div>\n')
-        html.append(f'<div class="reason">Reason: {verdict["reason"]}</div>\n')
-        html.append('</div>\n')
-
-    # Close HTML structure
-    html.append("""
-    </body>
-    </html>
-    """)
-
-    html_str = "\n".join(html)
-    return html_str
 
 def check_input(input):
     """
@@ -182,7 +116,7 @@ def check_input(input):
 async def get_homepage():
     # get tech stack
     stack = await get_stack()
-    md = f"## Tech stack:\n"
+    md = f"## Tech stack\n"
     lines = [md]
     lines.extend([f"{key}: {value}" for key, value in stack.items()])
     md = "\n".join(lines)
