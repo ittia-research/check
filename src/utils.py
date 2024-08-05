@@ -138,7 +138,8 @@ async def get_stack():
         "Embedding model": settings.EMBEDDING_MODEL_NAME,
         "Rerank model": settings.RERANK_MODEL_NAME,
         "RAG chunk sizes": settings.RAG_CHUNK_SIZES,
-        "RAG deploy mode": settings.RAG_MODEL_DEPLOY,
+        "Embedding deploy mode": settings.EMBEDDING_MODEL_DEPLOY,
+        "Rerank deploy mode": settings.RERANK_MODEL_DEPLOY,
     }
     return stack
     
