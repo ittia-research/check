@@ -1,9 +1,11 @@
+import json
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response, JSONResponse, HTMLResponse, PlainTextResponse, FileResponse
 import logging
 
-import llm, index, utils
+import llm, utils
+from index import Index
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,15 +38,11 @@ async def fact_check(input):
         if not search:
             fail_search = True
             continue
-        logger.info(f"head of search results: {search[0:200]}")
-        contexts = await run_in_threadpool(index.get_contexts, statement, keywords, search)
-        if not contexts:
-            continue
-        logger.info(f"contexts: {contexts}")
-        verdict = await run_in_threadpool(llm.get_verdict, statement, contexts)
+        logger.info(f"head of search results: {json.dumps(search)[0:500]}")
+        verdict = await run_in_threadpool(llm.get_verdict, statement, keywords, search)
         if not verdict:
             continue
-        logger.info(f"verdict: {verdict}")
+        logger.info(f"final verdict: {verdict}")
         verdicts.append(verdict)
 
     if not verdicts:
