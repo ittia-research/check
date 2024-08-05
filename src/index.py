@@ -17,7 +17,7 @@ from llama_index.core.indices.postprocessor import SentenceTransformerRerank
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.llms import MockLLM
 
-Settings.llm = MockLLM()  # retrieve only, do not use LLM for synthesize
+Settings.llm = MockLLM(max_tokens=256)  # retrieve only, do not use LLM for synthesize
 
 from settings import settings
 

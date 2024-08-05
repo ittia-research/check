@@ -182,7 +182,7 @@ def check_input(input):
 async def get_homepage():
     # get tech stack
     stack = await get_stack()
-    md = f"## Tech stack:\n"
+    md = f"## Tech stack\n"
     lines = [md]
     lines.extend([f"{key}: {value}" for key, value in stack.items()])
     md = "\n".join(lines)
