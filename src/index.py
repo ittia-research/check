@@ -39,11 +39,13 @@ Settings.embed_model = embed_model
     
 def nodes2list(nodes):
     nodes_list = []
-    for ind, source_node in enumerate(nodes):
-        _i = _sub = {}
-        _sub['id'] = source_node.node.node_id
-        _sub['score'] = source_node.score
-        _sub['text'] = source_node.node.get_content().strip()
+    for node in nodes:
+        _sub = {
+            'id': node.node_id,
+            'score': node.score,
+            'text': node.get_content().strip(),
+            'metadata': node.metadata,
+        }
         nodes_list.append(_sub)
     return nodes_list
 
@@ -91,13 +93,13 @@ class Index():
     
         return auto_merging_engine
         
-    def get_contexts(self, statement, keywords, text):
+    def get_contexts(self, statement, keywords, text, metadata):
         """
         Get list of contexts.
     
         Todo: resources re-use for multiple run.
         """
-        document = Document(text=text)
+        document = Document(text=text, metadata=metadata)
         index = self.build_automerging_index(
             [document],
             chunk_sizes=settings.RAG_CHUNK_SIZES,

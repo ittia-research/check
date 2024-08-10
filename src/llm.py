@@ -157,9 +157,13 @@ def get_verdict(statement, keywords, search_json):
 
     def process_result(result):
         content = utils.clear_md_links(result.get('content'))
+        metadata = {
+            "url": result.get('url'),
+            "title": result.get('title'),
+        }
         
         try:
-            contexts = Index().get_contexts(statement, keywords, content)
+            contexts = Index().get_contexts(statement, keywords, content, metadata)
         except Exception as e:
             logging.warning(f"Getting contexts failed: {e}")
             return None
