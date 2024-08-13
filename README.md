@@ -63,6 +63,10 @@ Contexts
 Retrieval
 - [ ] Retrieve the latest info when facts might change
 
+### pipeline
+DSPy:
+- [ ] make dspy.settings apply to sessions only in order to support multiple retrieve index
+
 ### Toolchain
 - [ ] Evaluate MLOps pipeline
   - https://kitops.ml

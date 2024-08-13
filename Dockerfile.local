@@ -1,6 +1,7 @@
 FROM intel/intel-optimized-pytorch:2.3.0-serving-cpu
 WORKDIR /app
-COPY requirements.local.txt /app
+COPY requirements.*.txt /app
+RUN pip install --no-cache-dir -r requirements.base.txt
 RUN pip install --no-cache-dir -r requirements.local.txt
 COPY . /app
 EXPOSE 8000

@@ -1,8 +1,1 @@
-aiohttp
-fastapi
-llama-index
 llama-index-embeddings-huggingface
-llama-index-embeddings-ollama
-llama-index-postprocessor-jinaai-rerank
-openai
-uvicorn

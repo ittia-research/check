@@ -1,7 +1,7 @@
 FROM python:3.11-slim-bookworm
 WORKDIR /app
-COPY requirements.remote.txt /app
-RUN pip install --no-cache-dir -r requirements.remote.txt
+COPY requirements.base.txt /app
+RUN pip install --no-cache-dir -r requirements.base.txt
 COPY . /app
 EXPOSE 8000
 ENV NAME "Fact-check API"

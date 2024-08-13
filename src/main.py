@@ -4,8 +4,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response, JSONResponse, HTMLResponse, PlainTextResponse, FileResponse
 import logging
 
-import llm, utils
-from index import Index
+import llm, utils, pipeline
 
 logging.basicConfig(
     level=logging.INFO,
@@ -39,7 +38,7 @@ async def fact_check(input):
             fail_search = True
             continue
         logger.info(f"head of search results: {json.dumps(search)[0:500]}")
-        verdict = await run_in_threadpool(llm.get_verdict, statement, keywords, search)
+        verdict = await run_in_threadpool(pipeline.get_verdict, search_json=search, statement=statement)
         if not verdict:
             continue
         logger.info(f"final verdict: {verdict}")
