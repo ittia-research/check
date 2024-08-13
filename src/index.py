@@ -27,13 +27,25 @@ jinaai_rerank.API_URL = settings.RERANK_BASE_URL + "/rerank"  # switch to on-pre
 # todo: high lantency between client and the ollama embedding server will slow down embedding a lot
 from llama_index.embeddings.ollama import OllamaEmbedding
 
+# todo: improve embedding performance
+if settings.EMBEDDING_MODEL_DEPLOY == "local":
+    embed_model="local:" + settings.EMBEDDING_MODEL_NAME
+else:
+    embed_model = OllamaEmbedding(
+        model_name=settings.EMBEDDING_MODEL_NAME,
+        base_url=os.environ.get("OLLAMA_BASE_URL"),  # todo: any other configs here?
+    )
+Settings.embed_model = embed_model
+    
 def nodes2list(nodes):
     nodes_list = []
-    for ind, source_node in enumerate(nodes):
-        _i = _sub = {}
-        _sub['id'] = source_node.node.node_id
-        _sub['score'] = source_node.score
-        _sub['text'] = source_node.node.get_content().strip()
+    for node in nodes:
+        _sub = {
+            'id': node.node_id,
+            'score': node.score,
+            'text': node.get_content().strip(),
+            'metadata': node.metadata,
+        }
         nodes_list.append(_sub)
     return nodes_list
 
@@ -44,27 +56,16 @@ class Index():
         chunk_sizes=None,
     ):
         chunk_sizes = chunk_sizes or [2048, 512, 128]
-
-        # todo: improve embedding performance
-        if settings.EMBEDDING_MODEL_DEPLOY == "local":
-            embed_model="local:" + settings.EMBEDDING_MODEL_NAME
-        else:
-            embed_model = OllamaEmbedding(
-                model_name=settings.EMBEDDING_MODEL_NAME,
-                base_url=os.environ.get("OLLAMA_BASE_URL"),  # todo: any other configs here?
-            )
             
         node_parser = HierarchicalNodeParser.from_defaults(chunk_sizes=chunk_sizes)
         nodes = node_parser.get_nodes_from_documents(documents)
         leaf_nodes = get_leaf_nodes(nodes)
-        merging_context = ServiceContext.from_defaults(
-            embed_model=embed_model,
-        )
+
         storage_context = StorageContext.from_defaults()
         storage_context.docstore.add_documents(nodes)
     
         automerging_index = VectorStoreIndex(
-            leaf_nodes, storage_context=storage_context, service_context=merging_context
+            leaf_nodes, storage_context=storage_context
         )
         return automerging_index
     
@@ -92,13 +93,13 @@ class Index():
     
         return auto_merging_engine
         
-    def get_contexts(self, statement, keywords, text):
+    def get_contexts(self, statement, keywords, text, metadata):
         """
         Get list of contexts.
     
         Todo: resources re-use for multiple run.
         """
-        document = Document(text=text)
+        document = Document(text=text, metadata=metadata)
         index = self.build_automerging_index(
             [document],
             chunk_sizes=settings.RAG_CHUNK_SIZES,

@@ -60,6 +60,9 @@ Embedding:
 Contexts
 - [ ] Filter out non-related contexts before send for verdict
 
+Retrieval
+- [ ] Retrieve the latest info when facts might change
+
 ### Toolchain
 - [ ] Evaluate MLOps pipeline
   - https://kitops.ml
@@ -84,6 +87,9 @@ Contexts
 
 ### Doc
 - [ ] Show current tech stack.
+
+### Checkout
+- [ ] Chroma #retrieve
 
 ## Issues
 - [ ] Uses many different types of models, diffcult for performance optimization and maintenance.
