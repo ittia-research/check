@@ -2,6 +2,7 @@ import re, json, ast
 import aiohttp
 import itertools
 import logging
+from llama_index.core import Document
 
 from settings import settings
 
@@ -85,8 +86,7 @@ def generate_report_markdown(input_text, verdicts):
         markdown.append(f"### Statement {i}\n")
         markdown.append(f"**Statement**: {verdict['statement']}\n")
         markdown.append(f"**Verdict**: `{verdict['verdict']}`\n")
-        markdown.append(f"**Weight**: {verdict['weights']['winning']} out of {verdict['weights']['valid']} ({verdict['weights']['irrelevant']} irrelevant)\n")
-        markdown.append(f"**Reason**:\n\n{verdict['reason']}\n")
+        markdown.append(f"**Citation**:\n\n{verdict['citation']}\n")
 
     markdown_str = "\n".join(markdown)
     return markdown_str
@@ -149,3 +149,28 @@ async def get_status():
         "stack": stack
     }
     return status
+
+def llama_index_nodes_to_list(nodes):
+    nodes_list = []
+    for node in nodes:
+        _sub = {
+            'id': node.node_id,
+            'score': node.score,
+            'text': node.get_content().strip(),
+            'metadata': node.metadata,
+        }
+        nodes_list.append(_sub)
+    return nodes_list
+
+def search_json_to_docs(search_json):
+    """Search JSON results to Llama-Index documents"""
+    documents = []
+    for result in search_json['data']:
+        content = clear_md_links(result.get('content'))
+        metadata = {
+            "url": result.get('url'),
+            "title": result.get('title'),
+        }
+        document = Document(text=content, metadata=metadata)
+        documents.append(document)
+    return documents

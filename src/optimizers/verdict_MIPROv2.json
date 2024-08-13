@@ -1,0 +1,111 @@
+{
+  "generate_query[0]": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "statement": "Rod Strickland is the godfather of an NBA player who won an NBA championship with the Cavaliers in 2017.",
+        "answer": "False"
+      },
+      {
+        "statement": "Olivia Diaz is a member of the upper house of the Nevada legislature.",
+        "answer": "False"
+      }
+    ],
+    "signature_instructions": "Write a simple search query that will help retrieve info related to the statement.",
+    "signature_prefix": "Query:",
+    "extended_signature_instructions": "Given a statement and a context, generate a search query that will help retrieve information relevant to the statement within the context. Make sure the query includes key entities and concepts from both the statement and the context to effectively narrow down the search results.",
+    "extended_signature_prefix": "Query:"
+  },
+  "generate_query[1]": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "context": [
+          "G.o.d discography | This is the discography of the South Korean pop music group g.o.d who are currently managed by SidusHQ. Debuting in 1999, the five-member group has released eight albums, two of which have sold over a million copies each. They discontinued group activities following the release of their seventh album and parted ways to begin their solo careers. Their eighth and most recent full album was released in July 2014 to mark their reunion and the 15th anniversary of their debut.",
+          "Sakura Gakuin discography | Japanese idol group Sakura Gakuin has released seven studio albums, one compilation album, nine video albums, thirteen singles, and twenty music videos. Seven more singles and eight more music videos have been released by sub-units, including those by the band Babymetal released prior to March 2013. Studio albums are released annually, under the supertitle \"Sakura Gakuin [Year] Nendo\" (\u3055\u304f\u3089\u5b66\u9662[Year]\u5e74\u5ea6 , lit. \"Cherry Blossom Academy School Year [Year]\") .",
+          "I-II-III (Icon of Coil Albums) | I-II-III are three compilation albums released by Icon of Coil in 2006. Each released separately as re-issues of their first 3 albums ('Serenity is the Devil', 'The Soul is in the Software' & remix album 'One Nation Under Beat'), 2 singles ('Shallow Nation' & 'Access And Amplify') and EP ('Seren EP'), which were all either out of print, or hard to find."
+        ],
+        "statement": "Since 2021,  the K-pop group (G)I-DLE has released more music albums than the girl group BLACKPINK.",
+        "rationale": "We need to find the number of albums released by (G)I-DLE and BLACKPINK since 2021.",
+        "query": "number of albums released by (G)I-DLE since 2021 AND number of albums released by BLACKPINK since 2021"
+      },
+      {
+        "augmented": true,
+        "context": [
+          "Louise Bille-Brahe | Louise Bille-Brahe (1830-1910) was a Danish courtier; \"Overhofmesterinde\" (Mistress of the Robes) to the queen of Denmark, Louise of Hesse-Kassel, from 1888 to 1898, and to the next queen of Denmark, Louise of Sweden, from 1906 to 1910.",
+          "Alexandra of Denmark | Alexandra of Denmark (Alexandra Caroline Marie Charlotte Louise Julia; 1 December 1844 \u2013 20 November 1925) was Queen of the United Kingdom of Great Britain and Ireland and Empress of India as the wife of King-Emperor Edward VII.",
+          "Princess Feodora of Denmark | Princess Feodora of Denmark (Feodora Louise Caroline-Mathilde Viktoria Alexandra Frederikke Johanne) (3 July 1910 \u2013 17 March 1975) was a Danish princess as a daughter of Prince Harald of Denmark and granddaughter of Frederick VIII of Denmark."
+        ],
+        "statement": "Louise Bille-Brahe was a Danish courtier to the wife of King Frederick VIII.",
+        "rationale": "We need to find out who was the wife of King Frederick VIII. Then we need to find out if Louise Bille-Brahe was a courtier to her.",
+        "query": "wife of King Frederick VIII and Louise Bille-Brahe"
+      }
+    ],
+    "signature_instructions": "Write a simple search query that will help retrieve info related to the statement.",
+    "signature_prefix": "Query:",
+    "extended_signature_instructions": "Considering the context provided, generate a search query that aims to verify the truthfulness of the statement. The query should focus on identifying information relevant to the statement's claims and potential supporting evidence within the context.",
+    "extended_signature_prefix": "Query:"
+  },
+  "generate_query[2]": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "context": [
+          "Robin Perutz | Robin Perutz FRS (born December 1949 in Cambridge), son of the Nobel Prize winner Max Perutz, is a professor of Inorganic Chemistry at the University of York, where he was formerly head of department.",
+          "Robin Koontz | Robin Michal Koontz (born July 29, 1954) is an American author and illustrator of picture books and early readers for children as well as non-fiction for middle school readers. Her books are published in English, Spanish, and Indonesian. Many of her titles have been reviewed in School Library Journal, Kirkus Reviews, and the CLCD (Children's Literature Comprehension Database).",
+          "Robin Weisman | Robin Weisman (born March 14, 1984) is a former American child actress. She acted between 1990 and 1994.",
+          "Max Perutz | Max Ferdinand Perutz (19 May 1914 \u2013 6 February 2002) was an Austrian-born British molecular biologist, who shared the 1962 Nobel Prize for Chemistry with John Kendrew, for their studies of the structures of haemoglobin and myoglobin. He went on to win the Royal Medal of the Royal Society in 1971 and the Copley Medal in 1979. At Cambridge he founded and chaired (1962\u201379) The Medical Research Council Laboratory of Molecular Biology, fourteen of whose scientists have won Nobel Prizes. Perutz's contributions to molecular biology in Cambridge are documented in \"The History of the University of Cambridge: Volume 4 (1870 to 1990)\" published by the Cambridge University Press in 1992.",
+          "Max Grosskreutz | Max Octavius Grosskreutz (born 27 April 1906 in Proserpine, Queensland- died 20 September 1994) was an Australian speedway rider who finished third in the Star Riders' Championship in 1935, the forerunner to the Speedway World Championship which began a year later in 1936."
+        ],
+        "statement": "The father of Robin Perutz was born in 1914.",
+        "rationale": "We need to find information about Robin Perutz's father. We know from the context that Robin Perutz's father is Max Perutz. We also know from the context that Max Perutz was born in 1914.",
+        "query": "Max Perutz birth year"
+      },
+      {
+        "statement": "In 2021, the Cuban government announced plans to gradually phase out the CUC and unify the country's currency.",
+        "answer": "irrelevant"
+      }
+    ],
+    "signature_instructions": "Write a simple search query that will help retrieve info related to the statement.",
+    "signature_prefix": "Query:",
+    "extended_signature_instructions": "Given a statement about a person and their profession, generate a search query that will help retrieve information to determine if the statement is true, focusing on confirming the person's profession.",
+    "extended_signature_prefix": "Query:"
+  },
+  "retrieve": {
+    "k": 3
+  },
+  "generate_verdict": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "context": [
+          "2017 MTV Video Music Awards | The 2017 MTV Video Music Awards were held on August 27, 2017 at The Forum in Inglewood, California, honoring music videos released between June 25, 2016 and June 23, 2017. It was hosted by Katy Perry. The 34th annual award show aired live from the venue for the second time in its history. The music video for Taylor Swift's song \"Look What You Made Me Do\" premiered during the broadcast. Lil Yachty co-hosted the pre-show with Terrence J, Charlamagne Tha God, and MTV News' Gaby Wilson. It was broadcast across various Viacom networks and their related apps.",
+          "2013 MTV Video Music Awards | The 2013 MTV Video Music Awards were held on August 25, 2013 at the Barclays Center in Brooklyn, New York. Marking the 30th installment of the award show, they were the first to be held in New York City not to use a venue within the borough of Manhattan. Nominations were announced on July 17, 2013. Leading the nominees were Justin Timberlake and Macklemore & Ryan Lewis with six, followed by Bruno Mars, Miley Cyrus, and Robin Thicke with four. Justin Timberlake was the big winner on the night with four awards, including Video of the Year for \"Mirrors\" and the Michael Jackson Vanguard Award. Macklemore & Ryan Lewis, Bruno Mars and Taylor Swift were also among the winners of the night. The ceremony drew a total of 10.1 million viewers.",
+          "2015 MTV Video Music Awards | The 2015 MTV Video Music Awards were held on August 30, 2015. The 32nd installment of the event was held at the Microsoft Theater in Los Angeles, California, and hosted by Miley Cyrus. Taylor Swift led the nominations with a total of ten, followed by Ed Sheeran, who had six., bringing his total number of mentions to 13. Swift's \"Wildest Dreams\" music video premiered during the pre-show. Cyrus also announced and released her studio album \"Miley Cyrus & Her Dead Petz\", right after her performance at the end of the show. During his acceptance speech, Kanye West announced that he would be running for the 2020 U.S. Presidential Election. Taylor Swift won the most awards with four, including Video of the Year and Best Female Video. The VMA trophies were redesigned by Jeremy Scott."
+        ],
+        "statement": "The 2022 MTV Video Music Awards were held at the Prudential Center in Newark, New Jersey.",
+        "rationale": "The provided context describes the MTV Video Music Awards from 2013, 2015, and 2017. There is no information about the 2022 MTV Video Music Awards.",
+        "verdict": "Irrelevant"
+      },
+      {
+        "statement": "The island that housed a federal prison from 1934 to 1963 is called Alcatraz.",
+        "answer": "True"
+      }
+    ],
+    "signature_instructions": "Verify that the statement is based on the provided context.",
+    "signature_prefix": "Verdict:",
+    "extended_signature_instructions": "Using the given context, determine whether the statement is factually supported, refuted by the context, or irrelevant to the information provided. Justify your response by identifying specific details from the context that support or contradict the statement.",
+    "extended_signature_prefix": "Verdict:"
+  }
+}
