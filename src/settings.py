@@ -23,5 +23,8 @@ class Settings:
             self.RAG_CHUNK_SIZES = ast.literal_eval(_chunk_sizes)
         except:
             pass
+
+        # threads
+        self.THREAD_BUILD_INDEX = int(os.environ.get("THREAD_BUILD_INDEX", 12))
     
 settings = Settings()
