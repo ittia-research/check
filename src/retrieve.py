@@ -4,6 +4,7 @@ LlamaIndexCustomRetriever
 
 import os, logging
 from typing import Optional
+import concurrent.futures
 
 from llama_index.core import (
     Document,
@@ -49,7 +50,30 @@ class LlamaIndexCustomRetriever():
         self.similarity_top_k = similarity_top_k
         if docs:
             self.build_index(docs)
-            
+
+    def create_index(self, nodes):
+        storage_context = StorageContext.from_defaults()
+        storage_context.docstore.add_documents(nodes)
+        leaf_nodes = get_leaf_nodes(nodes)
+        return VectorStoreIndex(leaf_nodes, storage_context=storage_context)
+
+    def merge_index(self, indexs):
+        """
+        Args:
+          - indexs: list of indexs
+        """
+        nodes = []
+        for index in indexs:
+            vector_store_dict = index.storage_context.vector_store.to_dict()
+            embedding_dict = vector_store_dict['embedding_dict']
+            for doc_id, node in index.storage_context.docstore.docs.items():
+                # necessary to avoid re-calc of embeddings
+                node.embedding = embedding_dict[doc_id]
+                nodes.append(node)
+        
+        merged_index = VectorStoreIndex(nodes=nodes)
+        return merged_index
+        
     def build_automerging_index(
         self,
         documents,
@@ -62,20 +86,30 @@ class LlamaIndexCustomRetriever():
         storage_context = StorageContext.from_defaults()
         storage_context.docstore.add_documents(nodes)
     
-        automerging_index = VectorStoreIndex(
-            leaf_nodes, storage_context=storage_context
-        )
-        return automerging_index
+        leaf_indexs = []
+
+        # TODO: better concurrency, possibly async
+        with concurrent.futures.ThreadPoolExecutor(max_workers=settings.THREAD_BUILD_INDEX) as executor:
+            future_to_index = {executor.submit(self.create_index, [_node]): _node for _node in leaf_nodes}
+    
+            for future in concurrent.futures.as_completed(future_to_index):
+                index = future.result()
+                leaf_indexs.append(index)
+    
+        automerging_index = self.merge_index(leaf_indexs)
+                
+        return automerging_index, storage_context
     
     def get_automerging_query_engine(
         self,
         automerging_index,
+        storage_context,
         similarity_top_k=6,
         rerank_top_n=3,
     ):
         base_retriever = automerging_index.as_retriever(similarity_top_k=similarity_top_k)
         retriever = AutoMergingRetriever(
-            base_retriever, automerging_index.storage_context, verbose=True
+            base_retriever, storage_context, verbose=True
         )
     
         if settings.RERANK_MODEL_DEPLOY == "local":
@@ -95,15 +129,15 @@ class LlamaIndexCustomRetriever():
         """Initiate index or build a new one."""
         
         if docs:
-            index = self.build_automerging_index(
+            self.index, self.storage_context = self.build_automerging_index(
                 docs,
                 chunk_sizes=settings.RAG_CHUNK_SIZES,
             )  # TODO: try to retrieve directly
-            self.index = index
         
     def retrieve(self, query):
         query_engine = self.get_automerging_query_engine(
-            self.index,
+            automerging_index=self.index,
+            storage_context=self.storage_context,
             similarity_top_k=self.similarity_top_k * 3,
             rerank_top_n=self.similarity_top_k
         )

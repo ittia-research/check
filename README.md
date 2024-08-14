@@ -67,6 +67,9 @@ Retrieval
 DSPy:
 - [ ] make dspy.settings apply to sessions only in order to support multiple retrieve index
 
+### Retrival
+- [ ] Better retrival solution: high performance, concurrency, multiple index, index editable.
+
 ### Toolchain
 - [ ] Evaluate MLOps pipeline
   - https://kitops.ml
