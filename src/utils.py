@@ -137,7 +137,7 @@ async def get_stack():
         "LLM model": settings.LLM_MODEL_NAME,
         "Embedding model": settings.EMBEDDING_MODEL_NAME,
         "Rerank model": settings.RERANK_MODEL_NAME,
-        "RAG chunk sizes": settings.RAG_CHUNK_SIZES,
+        "Index chunk sizes": settings.INDEX_CHUNK_SIZES,
         "Embedding deploy mode": settings.EMBEDDING_MODEL_DEPLOY,
         "Rerank deploy mode": settings.RERANK_MODEL_DEPLOY,
     }

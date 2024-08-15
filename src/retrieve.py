@@ -132,7 +132,7 @@ class LlamaIndexCustomRetriever():
         if docs:
             self.index, self.storage_context = self.build_automerging_index(
                 docs,
-                chunk_sizes=settings.RAG_CHUNK_SIZES,
+                chunk_sizes=settings.INDEX_CHUNK_SIZES,
             )  # TODO: try to retrieve directly
         
     def retrieve(self, query):
