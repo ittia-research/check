@@ -2,7 +2,6 @@ aiohttp
 dspy-ai
 fastapi
 llama-index
-llama-index-embeddings-ollama
 llama-index-postprocessor-jinaai-rerank
 openai
 uvicorn

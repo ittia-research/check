@@ -29,7 +29,7 @@ import llama_index.postprocessor.jinaai_rerank.base as jinaai_rerank  # todo: sh
 jinaai_rerank.API_URL = settings.RERANK_BASE_URL + "/rerank"  # switch to on-premise
 
 # todo: high lantency between client and the ollama embedding server will slow down embedding a lot
-from llama_index.embeddings.ollama import OllamaEmbedding
+from ollama_embedding import OllamaEmbedding
 
 # todo: improve embedding performance
 if settings.EMBEDDING_MODEL_DEPLOY == "local":
@@ -111,7 +111,8 @@ class LlamaIndexCustomRetriever():
         retriever = AutoMergingRetriever(
             base_retriever, storage_context, verbose=True
         )
-    
+
+        # TODO: load model files at app start
         if settings.RERANK_MODEL_DEPLOY == "local":
             rerank = SentenceTransformerRerank(
                 top_n=rerank_top_n, model=settings.RERANK_MODEL_NAME,
