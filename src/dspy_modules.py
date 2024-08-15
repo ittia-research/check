@@ -19,6 +19,7 @@ class GenerateSearchQuery(dspy.Signature):
     statement = dspy.InputField()
     query = dspy.OutputField()
 
+# TODO: citation needs higher token limits
 class GenerateCitedParagraph(dspy.Signature):
     """Generate a paragraph with citations."""
     context = dspy.InputField(desc="may contain relevant facts")

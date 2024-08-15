@@ -26,5 +26,8 @@ class Settings:
 
         # threads
         self.THREAD_BUILD_INDEX = int(os.environ.get("THREAD_BUILD_INDEX", 12))
+
+        # keys
+        self.EMBEDDING_API_KEY = os.environ.get("EMBEDDING_API_KEY") or ""
     
 settings = Settings()
