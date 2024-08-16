@@ -4,7 +4,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response, JSONResponse, HTMLResponse, PlainTextResponse, FileResponse
 import logging
 
-import llm, utils, pipeline
+import utils, pipeline
 
 logging.basicConfig(
     level=logging.INFO,
@@ -18,7 +18,7 @@ Process input string, fact-check and output MARKDOWN
 async def fact_check(input):
     status = 500
     logger.info(f"Fact checking: {input}")
-    statements = await run_in_threadpool(llm.get_statements, input)
+    statements = await run_in_threadpool(pipeline.get_statements, input)
     logger.info(f"statements: {statements}")
     if not statements:
         raise HTTPException(status_code=status, detail="No statements found")
@@ -29,11 +29,11 @@ async def fact_check(input):
         if not statement:
             continue
         logger.info(f"statement: {statement}")
-        keywords = await run_in_threadpool(llm.get_search_keywords, statement)
-        if not keywords:
+        query = await run_in_threadpool(pipeline.get_search_query, statement)
+        if not query:
             continue
-        logger.info(f"keywords: {keywords}")
-        search = await utils.search(keywords)
+        logger.info(f"search query: {query}")
+        search = await utils.search(query)
         if not search:
             fail_search = True
             continue

@@ -1,23 +1,10 @@
-import re, json, ast
+import re, json
 import aiohttp
 import itertools
 import logging
 from llama_index.core import Document
 
 from settings import settings
-
-def llm2list(text):
-    list_obj = []
-    try:
-        # find the first pair of square brackets and their content
-        match = re.search(r'\[.*?\]', text, re.DOTALL)
-        
-        if match:
-            list_obj = ast.literal_eval(match.group())
-    except Exception as e:
-        logging.warning(f"Failed convert LLM response to list: {e}")
-        pass
-    return list_obj
 
 def llm2json(text):
     json_object = {}
