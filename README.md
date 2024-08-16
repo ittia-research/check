@@ -106,6 +106,7 @@ DSPy:
 ### Reports
 - [ ] AI-generated misinformation
 ### Factcheck
+- https://www.snopes.com
 - https://www.bmi.bund.de/SharedDocs/schwerpunkte/EN/disinformation/examples-of-russian-disinformation-and-the-facts.html
 ### Resources
 #### Inference

@@ -8,11 +8,9 @@ import concurrent.futures
 
 from llama_index.core import (
     Document,
-    ServiceContext,
     Settings,
     StorageContext,
     VectorStoreIndex,
-    load_index_from_storage,
 )
 from llama_index.core.node_parser import HierarchicalNodeParser, get_leaf_nodes
 from llama_index.core.retrievers import AutoMergingRetriever
@@ -29,7 +27,7 @@ import llama_index.postprocessor.jinaai_rerank.base as jinaai_rerank  # todo: sh
 jinaai_rerank.API_URL = settings.RERANK_BASE_URL + "/rerank"  # switch to on-premise
 
 # todo: high lantency between client and the ollama embedding server will slow down embedding a lot
-from ollama_embedding import OllamaEmbedding
+from . import OllamaEmbedding
 
 # todo: improve embedding performance
 if settings.EMBEDDING_MODEL_DEPLOY == "local":
@@ -132,7 +130,7 @@ class LlamaIndexCustomRetriever():
         if docs:
             self.index, self.storage_context = self.build_automerging_index(
                 docs,
-                chunk_sizes=settings.RAG_CHUNK_SIZES,
+                chunk_sizes=settings.INDEX_CHUNK_SIZES,
             )  # TODO: try to retrieve directly
         
     def retrieve(self, query):

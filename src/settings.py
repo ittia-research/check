@@ -16,13 +16,11 @@ class Settings:
         self.EMBEDDING_MODEL_DEPLOY = os.environ.get("EMBEDDING_MODEL_DEPLOY") or "local"
         self.RERANK_MODEL_DEPLOY = os.environ.get("RERANK_MODEL_DEPLOY") or "local"
 
-        # set RAG chunk sizes
-        self.RAG_CHUNK_SIZES = [1024, 256]
-        _chunk_sizes = os.environ.get("RAG_CHUNK_SIZES")
+        # set Index chunk sizes
         try:
-            self.RAG_CHUNK_SIZES = ast.literal_eval(_chunk_sizes)
+            self.INDEX_CHUNK_SIZES = ast.literal_eval(os.environ.get("INDEX_CHUNK_SIZES"))
         except:
-            pass
+            self.INDEX_CHUNK_SIZES = [1024, 256]
 
         # threads
         self.THREAD_BUILD_INDEX = int(os.environ.get("THREAD_BUILD_INDEX", 12))

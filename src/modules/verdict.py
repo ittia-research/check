@@ -1,12 +1,6 @@
 import dspy
 from dsp.utils import deduplicate
 
-from retrieve import LlamaIndexRM
-from settings import settings
-
-llm = dspy.OpenAI(model=settings.LLM_MODEL_NAME, api_base=f"{settings.OPENAI_BASE_URL}/", max_tokens=200, stop='\n\n')
-dspy.settings.configure(lm=llm)
-
 class CheckStatementFaithfulness(dspy.Signature):
     """Verify that the statement is based on the provided context."""
     context = dspy.InputField(desc="facts here are assumed to be true")
@@ -18,14 +12,6 @@ class GenerateSearchQuery(dspy.Signature):
     context = dspy.InputField(desc="may contain relevant facts")
     statement = dspy.InputField()
     query = dspy.OutputField()
-
-# TODO: citation needs higher token limits
-class GenerateCitedParagraph(dspy.Signature):
-    """Generate a paragraph with citations."""
-    context = dspy.InputField(desc="may contain relevant facts")
-    statement = dspy.InputField()
-    verdict = dspy.InputField()
-    paragraph = dspy.OutputField(desc="includes citations")
 
 """
 SimplifiedBaleen module
@@ -39,7 +25,7 @@ To-do:
   - remove some contexts incase token reaches to max
   - does different InputField name other than answer compateble with dspy evaluate
 """
-class ContextVerdict(dspy.Module):
+class Verdict(dspy.Module):
     def __init__(self, retrieve, passages_per_hop=3, max_hops=3):
         super().__init__()
         # self.generate_query = dspy.ChainOfThought(GenerateSearchQuery)  # IMPORTANT: solves error `list index out of range`
@@ -59,42 +45,4 @@ class ContextVerdict(dspy.Module):
         verdict = self.generate_verdict(context=context, statement=statement)
         pred = dspy.Prediction(answer=verdict.verdict, rationale=verdict.rationale, context=context)
         return pred
-
-"""Generate citation from context and verdict"""
-class Citation(dspy.Module):
-    def __init__(self):
-        super().__init__()
-        self.generate_cited_paragraph = dspy.ChainOfThought(GenerateCitedParagraph)
-
-    def forward(self, statement, context, verdict):
-        citation = self.generate_cited_paragraph(context=context, statement=statement, verdict=verdict)
-        pred = dspy.Prediction(verdict=verdict, citation=citation.paragraph, context=context)
-        return pred
-
-"""
-Get both verdict and citation.
-
-Args:
-    retrieve: dspy.Retrieve
-"""
-class VerdictCitation():
-    def __init__(
-        self,
-        docs,
-    ):
-        self.retrieve = LlamaIndexRM(docs=docs)
-        
-        # loading compiled ContextVerdict
-        self.context_verdict = ContextVerdict(retrieve=self.retrieve)
-        self.context_verdict.load("./optimizers/verdict_MIPROv2.json")
-
-    def get(self, statement):
-        rep = self.context_verdict(statement)
-        context = rep.context
-        verdict = rep.answer
-        
-        rep = Citation()(statement=statement, context=context, verdict=verdict)
-        citation = rep.citation
-
-        return verdict, citation
-        
+ 
