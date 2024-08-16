@@ -17,13 +17,16 @@ class VerdictCitation():
     ):
         self.retrieve = LlamaIndexRM(docs=docs)
         
-        # loading compiled Verdict
-        self.context_verdict = Verdict(retrieve=self.retrieve)
-        optimizer_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../optimizers/verdict_MIPROv2.json")
-        self.context_verdict.load(optimizer_path)
-
     def get(self, statement):
-        rep = self.context_verdict(statement)
+        with dspy.context(rm=self.retrieve):
+            self.context_verdict = Verdict()
+        
+            # loading compiled Verdict
+            optimizer_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../optimizers/verdict_MIPROv2.json")
+            self.context_verdict.load(optimizer_path)
+            
+            rep = self.context_verdict(statement)
+        
         context = rep.context
         verdict = rep.answer
 
