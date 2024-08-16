@@ -1,10 +1,9 @@
-FROM intel/intel-optimized-pytorch:2.3.0-serving-cpu
+FROM pytorch/pytorch:2.4.0-cuda12.4-cudnn9-runtime
 WORKDIR /app
 COPY requirements.*.txt /app
 RUN pip install --no-cache-dir -r requirements.base.txt
 RUN pip install --no-cache-dir -r requirements.local.txt
 COPY . /app
 EXPOSE 8000
-ENV NAME "Fact-check API"
 WORKDIR /app/src
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
