@@ -26,12 +26,11 @@ To-do:
   - does different InputField name other than answer compateble with dspy evaluate
 """
 class Verdict(dspy.Module):
-    def __init__(self, retrieve, passages_per_hop=3, max_hops=3):
+    def __init__(self, passages_per_hop=3, max_hops=3):
         super().__init__()
         # self.generate_query = dspy.ChainOfThought(GenerateSearchQuery)  # IMPORTANT: solves error `list index out of range`
         self.generate_query = [dspy.ChainOfThought(GenerateSearchQuery) for _ in range(max_hops)]
-        self.retrieve = retrieve
-        self.retrieve.k = passages_per_hop
+        self.retrieve = dspy.Retrieve(k=passages_per_hop)
         self.generate_verdict = dspy.ChainOfThought(CheckStatementFaithfulness)
         self.max_hops = max_hops
 
@@ -39,7 +38,7 @@ class Verdict(dspy.Module):
         context = []
         for hop in range(self.max_hops):
             query = self.generate_query[hop](context=context, statement=statement).query
-            passages = self.retrieve(query=query, text_only=True)
+            passages = self.retrieve(query).passages
             context = deduplicate(context + passages)
 
         verdict = self.generate_verdict(context=context, statement=statement)
