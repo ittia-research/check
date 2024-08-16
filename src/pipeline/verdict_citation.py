@@ -1,4 +1,7 @@
 import os
+import dspy
+
+from modules import llm_long
 from modules import Citation, LlamaIndexRM, Verdict
 
 """
@@ -23,9 +26,11 @@ class VerdictCitation():
         rep = self.context_verdict(statement)
         context = rep.context
         verdict = rep.answer
-        
-        rep = Citation()(statement=statement, context=context, verdict=verdict)
-        citation = rep.citation
+
+        # Use the LLM with higher token limit for citation generation call
+        with dspy.context(lm=llm_long):
+            rep = Citation()(statement=statement, context=context, verdict=verdict)
+            citation = rep.citation
 
         return verdict, citation
 

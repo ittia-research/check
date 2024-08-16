@@ -6,6 +6,9 @@ from settings import settings
 llm = dspy.OpenAI(model=settings.LLM_MODEL_NAME, api_base=f"{settings.OPENAI_BASE_URL}/", max_tokens=200, stop='\n\n')
 dspy.settings.configure(lm=llm)
 
+# LM with higher token limits
+llm_long = dspy.OpenAI(model=settings.LLM_MODEL_NAME, api_base=f"{settings.OPENAI_BASE_URL}/", max_tokens=500, stop='\n\n')
+
 from .citation import Citation
 from .ollama_embedding import OllamaEmbedding
 from .retrieve import LlamaIndexRM
