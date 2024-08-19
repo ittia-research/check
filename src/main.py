@@ -19,9 +19,13 @@ Process input string, fact-check and output MARKDOWN
 async def fact_check(input):
     status = 500
     logger.info(f"Fact checking: {input}")
-    statements = await run_in_threadpool(pipeline.get_statements, input)
-    logger.info(f"statements: {statements}")
-    if not statements:
+
+    # get list of statements
+    try:
+        statements = await run_in_threadpool(pipeline.get_statements, input)
+        logger.info(f"statements: {statements}")
+    except Exception as e:
+        logger.error(f"Get statements failed: {e}")
         raise HTTPException(status_code=status, detail="No statements found")
 
     verdicts = []
@@ -29,25 +33,33 @@ async def fact_check(input):
     for statement in statements:
         if not statement:
             continue
-        logger.info(f"statement: {statement}")
-        query = await run_in_threadpool(pipeline.get_search_query, statement)
-        if not query:
+        logger.info(f"Statement: {statement}")
+
+        # get search query
+        try:
+            query = await run_in_threadpool(pipeline.get_search_query, statement)
+            logger.info(f"Search query: {query}")
+        except Exception as e:
+            logger.error(f"Getting search query from statement '{statement}' failed: {e}")
             continue
-        logger.info(f"search query: {query}")
 
         # searching
         try:
             search = await Search(query)
+            logger.info(f"Head of search results: {json.dumps(search)[0:500]}")
         except Exception as e:
             fail_search = True
             logger.error(f"Search '{query}' failed: {e}")
             continue
-            
-        logger.info(f"head of search results: {json.dumps(search)[0:500]}")
-        verdict = await run_in_threadpool(pipeline.get_verdict, search_json=search, statement=statement)
-        if not verdict:
+
+        # get verdict
+        try:
+            verdict = await run_in_threadpool(pipeline.get_verdict, search_json=search, statement=statement)
+            logger.info(f"Verdict: {verdict}")
+        except Exception as e:
+            logger.error(f"Getting verdict for statement {statement} failed: {e}")
             continue
-        logger.info(f"final verdict: {verdict}")
+            
         verdicts.append(verdict)
 
     if not verdicts:
