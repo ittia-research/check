@@ -10,9 +10,9 @@ OPENAI_API_KEY=<CHANGE_ME>
 OPENAI_BASE_URL=http://localhost:8000/v1
 
 RERANK_API_KEY=<CHANGE_ME>
-RERANK_BASE_URL=http://xinference:9997/v1
-RERANK_MODEL_DEPLOY=local
-RERANK_MODEL_NAME=BAAI/bge-reranker-v2-m3
+RERANK_BASE_URL=http://infinity:7997
+RERANK_MODEL_DEPLOY=api
+RERANK_MODEL_NAME=jinaai/jina-reranker-v2-base-multilingual
 
 SEARCH_BASE_URL=https://s.jina.ai
 
