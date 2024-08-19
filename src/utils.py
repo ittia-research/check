@@ -1,5 +1,4 @@
 import re, json
-import aiohttp
 import itertools
 import logging
 from llama_index.core import Document
@@ -17,32 +16,6 @@ def llm2json(text):
         logging.warning(f"Failed convert LLM response to JSON: {e}")
         pass
     return json_object
-    
-async def search(keywords):
-    """
-    Search and get a list of websites content.
-
-    Todo:
-      - Enhance response clear.
-    """
-    constructed_url = settings.SEARCH_BASE_URL + '/' + keywords
-
-    headers = {
-        "Accept": "application/json"
-    }
-
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.get(constructed_url, headers=headers) as response:
-                rep = await response.json()
-                rep_code = rep.get('code')
-                if rep_code != 200:
-                    raise Exception(f"Search response code: {rep_code}")
-        except Exception as e:
-            logging.error(f"Search '{keywords}' failed: {e}")
-            rep =  {}
-            
-    return rep
 
 def clear_md_links(text):
     """
@@ -161,3 +134,6 @@ def search_json_to_docs(search_json):
         document = Document(text=content, metadata=metadata)
         documents.append(document)
     return documents
+
+def retry_log_warning(retry_state):
+    logging.warning(f"Retrying attempt {retry_state.attempt_number} due to: {retry_state.outcome.exception()}")

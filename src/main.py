@@ -5,6 +5,7 @@ from fastapi.responses import Response, JSONResponse, HTMLResponse, PlainTextRes
 import logging
 
 import utils, pipeline
+from modules import Search
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,10 +34,15 @@ async def fact_check(input):
         if not query:
             continue
         logger.info(f"search query: {query}")
-        search = await utils.search(query)
-        if not search:
+
+        # searching
+        try:
+            search = await Search(query)
+        except Exception as e:
             fail_search = True
+            logger.error(f"Search '{query}' failed: {e}")
             continue
+            
         logger.info(f"head of search results: {json.dumps(search)[0:500]}")
         verdict = await run_in_threadpool(pipeline.get_verdict, search_json=search, statement=statement)
         if not verdict:

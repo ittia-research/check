@@ -12,6 +12,7 @@ llm_long = dspy.OpenAI(model=settings.LLM_MODEL_NAME, api_base=f"{settings.OPENA
 from .citation import Citation
 from .ollama_embedding import OllamaEmbedding
 from .retrieve import LlamaIndexRM
+from .search import Search
 from .search_query import SearchQuery
 from .statements import Statements
 from .verdict import Verdict
