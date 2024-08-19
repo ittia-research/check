@@ -1,0 +1,3 @@
+HF_HOME=/cache/huggingface
+HUGGING_FACE_HUB_TOKEN=<CHANGE_ME>
+

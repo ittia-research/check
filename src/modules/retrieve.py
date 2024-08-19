@@ -2,9 +2,9 @@
 LlamaIndexCustomRetriever
 """
 
-import os, logging
-from typing import Optional
+import logging
 import concurrent.futures
+from typing import Optional
 
 from llama_index.core import (
     Document,
@@ -32,9 +32,10 @@ from . import OllamaEmbedding
 if settings.EMBEDDING_MODEL_DEPLOY == "local":
     embed_model="local:" + settings.EMBEDDING_MODEL_NAME
 else:
+    # TODO: debug Ollama embedding with chunk size [4096, 2048, 1024] compare to local
     embed_model = OllamaEmbedding(
         model_name=settings.EMBEDDING_MODEL_NAME,
-        base_url=os.environ.get("OLLAMA_BASE_URL"),  # todo: any other configs here?
+        base_url=settings.EMBEDDING_BASE_URL,
     )
 Settings.embed_model = embed_model
 
