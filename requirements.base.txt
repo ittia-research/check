@@ -1,7 +1,7 @@
 aiohttp
-dspy-ai
+dspy-ai==2.4.13
 fastapi
-llama-index
-llama-index-postprocessor-jinaai-rerank
+llama-index==0.10.65
+llama-index-postprocessor-jinaai-rerank==0.1.7
 openai
 uvicorn

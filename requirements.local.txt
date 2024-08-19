@@ -1,1 +1,1 @@
-llama-index-embeddings-huggingface
+llama-index-embeddings-huggingface==0.2.3
