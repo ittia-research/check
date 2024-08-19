@@ -23,6 +23,8 @@ services:
               count: all
               capabilities: [gpu]
     restart: always
+
+  # infinity supports embedding and rerank models, v2 version supports serving multiple models
   infinity:
     image: michaelf34/infinity:latest
     container_name: infinity
@@ -33,6 +35,7 @@ services:
     env_file:
       - ./infra/env.d/infinity
       - ./infra/env.d/huggingface
+    command: ["v2"]
     deploy:
       resources:
         reservations:
