@@ -27,5 +27,6 @@ class Settings:
 
         # keys
         self.EMBEDDING_API_KEY = os.environ.get("EMBEDDING_API_KEY") or ""
+        self.RERANK_API_KEY = os.environ.get("RERANK_API_KEY") or ""
     
 settings = Settings()

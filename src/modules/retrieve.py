@@ -23,8 +23,7 @@ Settings.llm = MockLLM(max_tokens=256)  # retrieve only, do not use LLM for synt
 import utils
 from settings import settings
 
-import llama_index.postprocessor.jinaai_rerank.base as jinaai_rerank  # todo: shall we lock package version?
-jinaai_rerank.API_URL = settings.RERANK_BASE_URL + "/rerank"  # switch to on-premise
+from llama_index.postprocessor.jinaai_rerank import JinaRerank
 
 # todo: high lantency between client and the ollama embedding server will slow down embedding a lot
 from . import OllamaEmbedding
@@ -116,7 +115,12 @@ class LlamaIndexCustomRetriever():
                 top_n=rerank_top_n, model=settings.RERANK_MODEL_NAME,
             )  # TODO: add support `trust_remote_code=True`
         else:
-            rerank = jinaai_rerank.JinaRerank(api_key='', top_n=rerank_top_n, model=settings.RERANK_MODEL_NAME)
+            rerank = JinaRerank(
+                base_url = settings.RERANK_BASE_URL,
+                api_key=settings.RERANK_API_KEY, 
+                top_n=rerank_top_n, 
+                model=settings.RERANK_MODEL_NAME,
+            )
         
         auto_merging_engine = RetrieverQueryEngine.from_args(
             retriever, node_postprocessors=[rerank]
@@ -134,15 +138,22 @@ class LlamaIndexCustomRetriever():
             )  # TODO: try to retrieve directly
         
     def retrieve(self, query):
+        rerank_top_n=self.similarity_top_k
         query_engine = self.get_automerging_query_engine(
             automerging_index=self.index,
             storage_context=self.storage_context,
-            similarity_top_k=self.similarity_top_k * 3,
-            rerank_top_n=self.similarity_top_k
+            similarity_top_k=rerank_top_n * 3,
+            rerank_top_n=rerank_top_n
         )
         self.query_engine = query_engine
         auto_merging_response = self.query_engine.query(query)
         contexts = utils.llama_index_nodes_to_list(auto_merging_response.source_nodes)
+
+        # select top_n here because some rerank services does not support the feature
+        if len(contexts) > rerank_top_n:
+            contexts.sort(key=lambda x: x['score'], reverse=True)  # sort by score in descending order
+            contexts = contexts[:rerank_top_n]
+            
         return contexts
 
 import dspy
