@@ -1,0 +1,4 @@
+INFINITY_API_KEY=<CHANGE_ME>
+INFINITY_LOG_LEVEL=trace
+INFINITY_MODEL_ID=jinaai/jina-reranker-v2-base-multilingual
+

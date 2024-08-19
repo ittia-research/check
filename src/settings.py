@@ -8,6 +8,7 @@ class Settings:
         self.RERANK_MODEL_NAME = os.environ.get("RERANK_MODEL_NAME") or "BAAI/bge-reranker-v2-m3"
         
         self.OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL") or "https://api.openai.com/v1"
+        self.EMBEDDING_BASE_URL = os.environ.get("EMBEDDING_BASE_URL") or "http://ollama:11434"
         self.RERANK_BASE_URL = os.environ.get("RERANK_BASE_URL") or "http://xinference:9997/v1"
         self.PROJECT_HOSTING_BASE_URL = os.environ.get("PROJECT_HOSTING_BASE_URL") or "https://check.ittia.net"
         self.SEARCH_BASE_URL = os.environ.get("SEARCH_BASE_URL") or "https://s.jina.ai"
@@ -27,5 +28,6 @@ class Settings:
 
         # keys
         self.EMBEDDING_API_KEY = os.environ.get("EMBEDDING_API_KEY") or ""
+        self.RERANK_API_KEY = os.environ.get("RERANK_API_KEY") or ""
     
 settings = Settings()

@@ -4,7 +4,7 @@ services:
       dockerfile: Dockerfile
     container_name: check
     env_file:
-      - .env
+      - ./infra/env.d/check
     ports:
       - 8000:8000
     restart: always
@@ -23,17 +23,19 @@ services:
               count: all
               capabilities: [gpu]
     restart: always
-  xinference:
-    build:
-      context: infra/xinference
-      dockerfile: Dockerfile
-    container_name: xinference
+
+  # infinity supports embedding and rerank models, v2 version supports serving multiple models
+  infinity:
+    image: michaelf34/infinity:latest
+    container_name: infinity
     ports:
-      - 9997:9997
+      - 7997:7997
     volumes:
-      - /data/volumes/xinference:/data
-    environment:
-      - XINFERENCE_HOME=/data
+      - /data/cache/huggingface:/cache/huggingface
+    env_file:
+      - ./infra/env.d/infinity
+      - ./infra/env.d/huggingface
+    command: ["v2"]
     deploy:
       resources:
         reservations:
