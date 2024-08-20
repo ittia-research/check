@@ -23,9 +23,6 @@ class Settings:
         except:
             self.INDEX_CHUNK_SIZES = [1024, 256]
 
-        # threads
-        self.THREAD_BUILD_INDEX = int(os.environ.get("THREAD_BUILD_INDEX", 12))
-
         # keys
         self.EMBEDDING_API_KEY = os.environ.get("EMBEDDING_API_KEY") or ""
         self.RERANK_API_KEY = os.environ.get("RERANK_API_KEY") or ""

@@ -1,13 +1,13 @@
 services:
   check:
-    build:
-      dockerfile: Dockerfile
+    image: ittia/check:remote
     container_name: check
     env_file:
       - ./infra/env.d/check
     ports:
       - 8000:8000
     restart: always
+    
   ollama:
     image: ollama/ollama
     container_name: ollama
@@ -24,7 +24,7 @@ services:
               capabilities: [gpu]
     restart: always
 
-  # infinity supports embedding and rerank models, v2 version supports serving multiple models
+  # Infinity supports embedding and rerank models, v2 version supports serving multiple models
   infinity:
     image: michaelf34/infinity:latest
     container_name: infinity

@@ -25,18 +25,19 @@ from settings import settings
 
 from llama_index.postprocessor.jinaai_rerank import JinaRerank
 
-# todo: high lantency between client and the ollama embedding server will slow down embedding a lot
-from . import OllamaEmbedding
+from integrations import OllamaEmbedding
 
 # todo: improve embedding performance
 if settings.EMBEDDING_MODEL_DEPLOY == "local":
     embed_model="local:" + settings.EMBEDDING_MODEL_NAME
 else:
-    # TODO: debug Ollama embedding with chunk size [4096, 2048, 1024] compare to local
     embed_model = OllamaEmbedding(
-        model_name=settings.EMBEDDING_MODEL_NAME,
+        api_key=settings.EMBEDDING_API_KEY,
         base_url=settings.EMBEDDING_BASE_URL,
+        embed_batch_size=32,  # TODO: what's the best batch size for Ollama
+        model_name=settings.EMBEDDING_MODEL_NAME,
     )
+        
 Settings.embed_model = embed_model
 
 class LlamaIndexCustomRetriever():
@@ -48,29 +49,6 @@ class LlamaIndexCustomRetriever():
         self.similarity_top_k = similarity_top_k
         if docs:
             self.build_index(docs)
-
-    def create_index(self, nodes):
-        storage_context = StorageContext.from_defaults()
-        storage_context.docstore.add_documents(nodes)
-        leaf_nodes = get_leaf_nodes(nodes)
-        return VectorStoreIndex(leaf_nodes, storage_context=storage_context)
-
-    def merge_index(self, indexs):
-        """
-        Args:
-          - indexs: list of indexs
-        """
-        nodes = []
-        for index in indexs:
-            vector_store_dict = index.storage_context.vector_store.to_dict()
-            embedding_dict = vector_store_dict['embedding_dict']
-            for doc_id, node in index.storage_context.docstore.docs.items():
-                # necessary to avoid re-calc of embeddings
-                node.embedding = embedding_dict[doc_id]
-                nodes.append(node)
-        
-        merged_index = VectorStoreIndex(nodes=nodes)
-        return merged_index
         
     def build_automerging_index(
         self,
@@ -78,36 +56,27 @@ class LlamaIndexCustomRetriever():
         chunk_sizes=[2048, 512, 128],
     ):            
         node_parser = HierarchicalNodeParser.from_defaults(chunk_sizes=chunk_sizes)
-        nodes = node_parser.get_nodes_from_documents(documents)
-        leaf_nodes = get_leaf_nodes(nodes)
+        self.nodes = node_parser.get_nodes_from_documents(documents)
+        leaf_nodes = get_leaf_nodes(self.nodes)
 
         storage_context = StorageContext.from_defaults()
-        storage_context.docstore.add_documents(nodes)
+        storage_context.docstore.add_documents(self.nodes)
     
-        leaf_indexs = []
-
-        # TODO: better concurrency, possibly async
-        with concurrent.futures.ThreadPoolExecutor(max_workers=settings.THREAD_BUILD_INDEX) as executor:
-            future_to_index = {executor.submit(self.create_index, [_node]): _node for _node in leaf_nodes}
-    
-            for future in concurrent.futures.as_completed(future_to_index):
-                index = future.result()
-                leaf_indexs.append(index)
-    
-        automerging_index = self.merge_index(leaf_indexs)
+        automerging_index = VectorStoreIndex(
+            leaf_nodes, storage_context=storage_context, use_async=True
+        )
                 
-        return automerging_index, storage_context
+        return automerging_index
     
     def get_automerging_query_engine(
         self,
         automerging_index,
-        storage_context,
         similarity_top_k=6,
         rerank_top_n=3,
     ):
         base_retriever = automerging_index.as_retriever(similarity_top_k=similarity_top_k)
         retriever = AutoMergingRetriever(
-            base_retriever, storage_context, verbose=True
+            base_retriever, automerging_index.storage_context, verbose=True
         )
 
         # TODO: load model files at app start
@@ -133,16 +102,16 @@ class LlamaIndexCustomRetriever():
         """Initiate index or build a new one."""
         
         if docs:
-            self.index, self.storage_context = self.build_automerging_index(
+            self.index = self.build_automerging_index(
                 docs,
                 chunk_sizes=settings.INDEX_CHUNK_SIZES,
             )  # TODO: try to retrieve directly
         
     def retrieve(self, query):
+        # TODO: get query engine performance costs
         rerank_top_n=self.similarity_top_k
         query_engine = self.get_automerging_query_engine(
             automerging_index=self.index,
-            storage_context=self.storage_context,
             similarity_top_k=rerank_top_n * 3,
             rerank_top_n=rerank_top_n
         )
