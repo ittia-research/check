@@ -1,6 +1,7 @@
 aiohttp
 dspy-ai==2.4.13
 fastapi
+httpx[http2]
 llama-index==0.10.65
 llama-index-postprocessor-jinaai-rerank==0.1.7
 openai
