@@ -123,15 +123,22 @@ def llama_index_nodes_to_list(nodes):
     return nodes_list
 
 def search_json_to_docs(search_json):
-    """Search JSON results to Llama-Index documents"""
+    """
+    Search JSON results to Llama-Index documents
+
+    Do not add metadata for now
+    cause LlamaIndex uses `node.get_content(metadata_mode=MetadataMode.EMBED)` which addeds metadata to text for generate embeddings
+
+    TODO: pr to llama-index for metadata_mode setting
+    """
     documents = []
     for result in search_json['data']:
         content = clear_md_links(result.get('content'))
-        metadata = {
-            "url": result.get('url'),
-            "title": result.get('title'),
-        }
-        document = Document(text=content, metadata=metadata)
+        # metadata = {
+        #     "url": result.get('url'),
+        #     "title": result.get('title'),
+        # }
+        document = Document(text=content)  #  metadata=metadata
         documents.append(document)
     return documents
 
