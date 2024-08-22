@@ -1,0 +1,26 @@
+services:
+  wiki-dpr-serve-gpu:
+    build:
+      dockerfile: Dockerfile.serve.gpu
+    ports:
+      - 8893:8893
+    volumes:
+      - /data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  wiki-dpr-serve-cpu:
+    build:
+      dockerfile: Dockerfile.serve.cpu
+    ports:
+      - 8893:8893
+    volumes:
+      - /data:/data
+    restart: unless-stopped
+    

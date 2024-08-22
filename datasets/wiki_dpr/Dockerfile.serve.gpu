@@ -1,0 +1,12 @@
+FROM nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+RUN apt update && apt install python3 python3-pip git -y
+RUN pip install --no-cache-dir colbert-ai[torch,faiss-gpu]
+RUN pip install --no-cache-dir "numpy<2"
+
+WORKDIR /app
+
+CP prepare_files.py .
+CP server.py .
+CP start.sh .
+
+CMD ['/app/start.sh']
