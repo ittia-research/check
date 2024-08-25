@@ -33,6 +33,10 @@ def api_search_query(query, k):
     topk = list(sorted(topk, key=lambda p: (-1 * p['score'], p['pid'])))
     return {"query" : query, "topk": topk}
 
+@app.route("/health", methods=["GET"])
+def health():
+    return ('ok', 200)
+        
 @app.route("/api/search", methods=["GET"])
 def api_search():
     if request.method == "GET":
