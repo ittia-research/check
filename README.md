@@ -66,6 +66,7 @@ Retrieval
 ### pipeline
 DSPy:
 - [ ] make dspy.settings apply to sessions only in order to support multiple retrieve index
+- [ ] choose the right LLM temperature
 
 ### Retrival
 - [ ] Better retrival solution: high performance, concurrency, multiple index, index editable.
