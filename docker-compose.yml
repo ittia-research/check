@@ -2,6 +2,8 @@ services:
   check:
     image: ittia/check:remote
     container_name: check
+    volumes:
+      - /data/cache:/data/cache
     env_file:
       - ./infra/env.d/check
     ports:
