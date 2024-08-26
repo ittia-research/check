@@ -1,29 +1,46 @@
 import dspy
+import re
 from dsp.utils import deduplicate
 
-class CheckStatementFaithfulness(dspy.Signature):
-    """Verify that the statement is based on the provided context."""
-    context = dspy.InputField(desc="facts here are assumed to be true")
+class CheckStatement(dspy.Signature):
+    """Verify the statement based on the provided context."""
+    context = dspy.InputField(desc="Facts here are assumed to be true.")
     statement = dspy.InputField()
-    verdict = dspy.OutputField(desc="True/False/Irrelevant indicating if statement is faithful to context")
+    verdict = dspy.OutputField(desc=(
+                                    "In order,"
+                                    " `False` if the context directly negates the statement,"
+                                    " `True` if it directly supports the statement,"
+                                    " else `Irrelevant`.")
+                              )
+
+
+"""
+LM sometimes reply additional words after the verdict, this function address the issue.
+"""
+def extract_verdict(input):
+    # Extract the first word
+    match = re.match(r'\s*(\w+)', input)
+    if match:
+        first_word = match.group(1)
+        if first_word.lower() in ['false', 'true', 'irrelevant']:
+            # Return verdict with the first letter capitalized
+            return first_word.capitalize()
+    # If no in the verdict list, return the input directly
+    return input
     
 class GenerateSearchQuery(dspy.Signature):
-    """Write a simple search query that will help retrieve info related to the statement."""
-    context = dspy.InputField(desc="may contain relevant facts")
+    """Write a search query that will help retrieve additional info related to the statement."""
+    context = dspy.InputField(desc="Existing context.")
     statement = dspy.InputField()
     query = dspy.OutputField()
-
+    
 """
 SimplifiedBaleen module
 Avoid unnecessary content in module cause MIPROv2 optimizer will analize modules.
 
-Args:
-    retrieve: dspy.Retrieve
-    
 To-do: 
   - retrieve latest facts
-  - remove some contexts incase token reaches to max
-  - does different InputField name other than answer compateble with dspy evaluate
+  - query results might stays the same in hops: better retrieval
 """
 class Verdict(dspy.Module):
     def __init__(self, passages_per_hop=3, max_hops=3):
@@ -31,7 +48,7 @@ class Verdict(dspy.Module):
         # self.generate_query = dspy.ChainOfThought(GenerateSearchQuery)  # IMPORTANT: solves error `list index out of range`
         self.generate_query = [dspy.ChainOfThought(GenerateSearchQuery) for _ in range(max_hops)]
         self.retrieve = dspy.Retrieve(k=passages_per_hop)
-        self.generate_verdict = dspy.ChainOfThought(CheckStatementFaithfulness)
+        self.generate_verdict = dspy.ChainOfThought(CheckStatement)
         self.max_hops = max_hops
 
     def forward(self, statement):
@@ -41,7 +58,7 @@ class Verdict(dspy.Module):
             passages = self.retrieve(query).passages
             context = deduplicate(context + passages)
 
-        verdict = self.generate_verdict(context=context, statement=statement)
-        pred = dspy.Prediction(answer=verdict.verdict, rationale=verdict.rationale, context=context)
+        _verdict_predict = self.generate_verdict(context=context, statement=statement)
+        verdict = extract_verdict(_verdict_predict.verdict)
+        pred = dspy.Prediction(answer=verdict, rationale=_verdict_predict.rationale, context=context)
         return pred
- 

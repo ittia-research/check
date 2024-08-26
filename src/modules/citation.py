@@ -1,13 +1,12 @@
 import dspy
 
-# TODO: citation needs higher token limits
 class GenerateCitedParagraph(dspy.Signature):
     """Generate a paragraph with citations."""
-    context = dspy.InputField(desc="may contain relevant facts")
+    context = dspy.InputField(desc="May contain relevant facts.")
     statement = dspy.InputField()
     verdict = dspy.InputField()
-    paragraph = dspy.OutputField(desc="includes citations")
-
+    paragraph = dspy.OutputField(desc="Includes citations.")
+    
 """Generate citation from context and verdict"""
 class Citation(dspy.Module):
     def __init__(self):
