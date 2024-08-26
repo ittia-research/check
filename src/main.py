@@ -57,7 +57,7 @@ async def fact_check(input):
             verdict = await run_in_threadpool(pipeline.get_verdict, search_json=search, statement=statement)
             logger.info(f"Verdict: {verdict}")
         except Exception as e:
-            logger.error(f"Getting verdict for statement {statement} failed: {e}")
+            logger.error(f"Getting verdict for statement '{statement}' failed: {e}")
             continue
             
         verdicts.append(verdict)

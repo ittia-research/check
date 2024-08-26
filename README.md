@@ -55,7 +55,6 @@ LLM
 
 Embedding:
 - [ ] chunk size optimize
-- [ ] Ollama embedding performance
 
 Contexts
 - [ ] Filter out non-related contexts before send for verdict
@@ -67,9 +66,14 @@ Retrieval
 DSPy:
 - [ ] make dspy.settings apply to sessions only in order to support multiple retrieve index
 - [ ] choose the right LLM temperature
+- [ ] better training datasets
 
 ### Retrival
 - [ ] Better retrival solution: high performance, concurrency, multiple index, index editable.
+- [ ] Getting more sources when needed.
+
+### Verdict
+- [ ] Set final verdict standards.
 
 ### Toolchain
 - [ ] Evaluate MLOps pipeline

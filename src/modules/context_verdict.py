@@ -6,13 +6,10 @@ class CheckStatement(dspy.Signature):
     """Verify the statement based on the provided context."""
     context = dspy.InputField(desc="Facts here are assumed to be true.")
     statement = dspy.InputField()
-    verdict = dspy.OutputField(desc=(
-                                    "In order,"
+    verdict = dspy.OutputField(desc=("In order,"
                                     " `False` if the context directly negates the statement,"
                                     " `True` if it directly supports the statement,"
-                                    " else `Irrelevant`.")
-                              )
-
+                                    " else `Irrelevant`."))
 
 """
 LM sometimes reply additional words after the verdict, this function address the issue.
@@ -42,7 +39,7 @@ To-do:
   - retrieve latest facts
   - query results might stays the same in hops: better retrieval
 """
-class Verdict(dspy.Module):
+class ContextVerdict(dspy.Module):
     def __init__(self, passages_per_hop=3, max_hops=3):
         super().__init__()
         # self.generate_query = dspy.ChainOfThought(GenerateSearchQuery)  # IMPORTANT: solves error `list index out of range`

@@ -1,9 +1,5 @@
-"""
-LlamaIndexCustomRetriever
-"""
-
-import logging
 import concurrent.futures
+import logging
 from typing import Optional
 
 from llama_index.core import (
@@ -25,18 +21,27 @@ from settings import settings
 
 from llama_index.postprocessor.jinaai_rerank import JinaRerank
 
-from integrations import OllamaEmbedding
+from integrations import InfinityEmbedding
 
-# todo: improve embedding performance
 if settings.EMBEDDING_MODEL_DEPLOY == "local":
     embed_model="local:" + settings.EMBEDDING_MODEL_NAME
-else:
-    embed_model = OllamaEmbedding(
-        api_key=settings.EMBEDDING_API_KEY,
-        base_url=settings.EMBEDDING_BASE_URL,
-        embed_batch_size=32,  # TODO: what's the best batch size for Ollama
-        model_name=settings.EMBEDDING_MODEL_NAME,
-    )
+else:  # TODO: best batch size
+    if settings.EMBEDDING_SERVER_TYPE == "infinity":
+        embed_model = InfinityEmbedding(
+            api_key=settings.EMBEDDING_API_KEY,
+            base_url=settings.EMBEDDING_BASE_URL,
+            embed_batch_size=settings.EMBEDDING_BATCH_SIZE,
+            model_name=settings.EMBEDDING_MODEL_NAME,
+        )
+    elif settings.EMBEDDING_SERVER_TYPE == "ollama":
+        embed_model = OllamaEmbedding(
+            api_key=settings.EMBEDDING_API_KEY,
+            base_url=settings.EMBEDDING_BASE_URL,
+            embed_batch_size=settings.EMBEDDING_BATCH_SIZE,
+            model_name=settings.EMBEDDING_MODEL_NAME,
+        )
+    else:
+        raise ValueError(f"Embedding server {settings.EMBEDDING_SERVER_TYPE} not supported")
         
 Settings.embed_model = embed_model
 
@@ -61,9 +66,10 @@ class LlamaIndexCustomRetriever():
 
         storage_context = StorageContext.from_defaults()
         storage_context.docstore.add_documents(self.nodes)
-    
+
+        # TODO: enable async
         automerging_index = VectorStoreIndex(
-            leaf_nodes, storage_context=storage_context, use_async=True
+            leaf_nodes, storage_context=storage_context, use_async=False
         )
                 
         return automerging_index
