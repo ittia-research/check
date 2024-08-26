@@ -10,8 +10,8 @@ dspy.settings.configure(lm=llm)
 llm_long = dspy.OpenAI(model=settings.LLM_MODEL_NAME, api_base=f"{settings.OPENAI_BASE_URL}/", max_tokens=500, stop='\n\n')
 
 from .citation import Citation
+from .context_verdict import ContextVerdict
 from .retrieve import LlamaIndexRM
 from .search import Search
 from .search_query import SearchQuery
 from .statements import Statements
-from .verdict import Verdict

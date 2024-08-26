@@ -1,6 +1,8 @@
-import re, json
+import hashlib
 import itertools
+import json
 import logging
+import re
 from llama_index.core import Document
 
 from settings import settings
@@ -46,6 +48,7 @@ def generate_report_markdown(input_text, verdicts):
         markdown.append(f"### Statement {i}\n")
         markdown.append(f"**Statement**: {verdict['statement']}\n")
         markdown.append(f"**Verdict**: `{verdict['verdict']}`\n")
+        markdown.append(f"**Weight**: {verdict['weights']['winning']} out of {verdict['weights']['valid']} ({verdict['weights']['irrelevant']} irrelevant)\n")
         markdown.append(f"**Citation**:\n\n{verdict['citation']}\n")
 
     markdown_str = "\n".join(markdown)
@@ -142,5 +145,27 @@ def search_json_to_docs(search_json):
         documents.append(document)
     return documents
 
+def search_result_to_doc(search_result):
+    """
+    Search result to Llama-Index document
+
+    Do not add metadata for now
+    cause LlamaIndex uses `node.get_content(metadata_mode=MetadataMode.EMBED)` which addeds metadata to text for generate embeddings
+
+    TODO: pr to llama-index for metadata_mode setting
+    """
+    content = clear_md_links(search_result.get('content'))
+    # metadata = {
+    #     "url": result.get('url'),
+    #     "title": result.get('title'),
+    # }
+    document = Document(text=content)  #  metadata=metadata
+    return document
+    
 def retry_log_warning(retry_state):
     logging.warning(f"Retrying attempt {retry_state.attempt_number} due to: {retry_state.outcome.exception()}")
+
+def get_md5(input):
+    """Get MD5 from string"""
+    md5_hash = hashlib.md5(input.encode())
+    return md5_hash.hexdigest()

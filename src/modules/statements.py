@@ -7,7 +7,11 @@ from typing import List
 class Output(BaseModel):
     statements: List = Field(description="A list of key statements")
     
-# TODO: test consistency especially when content contains false claims
+"""
+TODO: 
+  - correct statements format: time, etc.
+  - test consistency especially when content contains false claims
+"""
 class GenerateStatements(dspy.Signature):
     """Extract the original statements from given content without fact check."""
     content: str = dspy.InputField(desc="The content to summarize")
