@@ -76,25 +76,7 @@ def check_input(input):
     
     return True
 
-async def get_homepage():
-    # get tech stack
-    stack = await get_stack()
-    md = f"## Tech stack\n"
-    lines = [md]
-    lines.extend([f"{key}: {value}" for key, value in stack.items()])
-    md = "\n".join(lines)
-        
-    md = f"""Fact-check API
-
-[Usage] {settings.PROJECT_HOSTING_BASE_URL}/YOUR_FACT_CHECK_QUERY
-
-[Source] https://github.com/ittia-research/check
-
-{md}
-"""
-    return md
-
-async def get_stack():
+def get_stack():
     # current tech stack
     stack = {
         "LLM model": settings.LLM_MODEL_NAME,
@@ -106,8 +88,8 @@ async def get_stack():
     }
     return stack
     
-async def get_status():
-    stack = await get_stack()
+def get_status():
+    stack = get_stack()
     status = {
         "stack": stack
     }
@@ -169,3 +151,8 @@ def get_md5(input):
     """Get MD5 from string"""
     md5_hash = hashlib.md5(input.encode())
     return md5_hash.hexdigest()
+
+# generate str for stream
+def get_stream(stage: str = 'wait', content = None):
+    message = {"stage": stage, "content": content}
+    return json.dumps(message)

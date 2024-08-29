@@ -43,7 +43,7 @@ def get_verdict_summary(verdicts_data, statement):
         v = verdict['verdict'].lower()
         if v in sum_citation:
             weight_valid += 1
-            citation = f"{verdict['citation']}\nsource: {hostname}\n\n"
+            citation = f"{verdict['citation']}  *source: {hostname}*\n\n"
             sum_citation[v]['citation'].append(citation)
             sum_citation[v]['weight'] += 1
             if v == 'true':
