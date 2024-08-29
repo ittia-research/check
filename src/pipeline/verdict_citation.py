@@ -12,7 +12,7 @@ from modules import Citation, LlamaIndexRM, ContextVerdict
 
 # loading compiled ContextVerdict
 optimizer_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"../optimizers/{settings.OPTIMIZER_FILE_NAME}")
-context_verdict = ContextVerdict()  # IMPORTANT: needs to initiate before load
+context_verdict = ContextVerdict()
 context_verdict.load(optimizer_path)
 
 """

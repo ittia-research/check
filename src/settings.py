@@ -43,5 +43,8 @@ class Settings:
 
         # concurrency
         self.CONCURRENCY_VERDICT = os.environ.get("CONCURRENCY_VERDICT") or 8
+
+        # web
+        self.STREAM_TIME_OUT = os.environ.get("STREAM_TIME_OUT") or 300  # in seconds
     
 settings = Settings()
