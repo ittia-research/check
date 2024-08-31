@@ -158,10 +158,11 @@ class LlamaIndexRM(dspy.Retrieve):
         docs,
         k: Optional[int] = None,
     ):
-        self.retriever = LlamaIndexCustomRetriever(docs=docs)
-
+        self.docs = docs
         if k:
             self.k = k
+
+        self.retriever = LlamaIndexCustomRetriever(docs=self.docs)
 
     @property
     def k(self) -> Optional[int]:
