@@ -109,7 +109,8 @@ async def health():
 async def status():
     _status = utils.get_status()
     return _status
-    
+
+# TODO: integrade error handle with output
 @app.get("/{path:path}", response_class=PlainTextResponse)
 async def catch_all(path: str, accept: str = Header(None)):
     try:

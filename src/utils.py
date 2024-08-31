@@ -49,7 +49,7 @@ def generate_report_markdown(input_text, verdicts):
         markdown.append(f"**Statement**: {verdict['statement']}\n")
         markdown.append(f"**Verdict**: `{verdict['verdict']}`\n")
         markdown.append(f"**Weight**: {verdict['weights']['winning']} out of {verdict['weights']['valid']} ({verdict['weights']['irrelevant']} irrelevant)\n")
-        markdown.append(f"**Citation**:\n\n{verdict['citation']}\n")
+        markdown.append(f"**Citations**:\n\n{verdict['citation']}\n")
 
     markdown_str = "\n".join(markdown)
     return markdown_str
