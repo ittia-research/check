@@ -17,67 +17,68 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-"""
-Process input string, fact-check and output MARKDOWN
-"""
-async def fact_check(input):
-    status = 500
-    logger.info(f"Fact checking: {input}")
+# """
+# Process input string, fact-check and output MARKDOWN
+# """
+# async def fact_check(input):
+#     status = 500
+#     logger.info(f"Fact checking: {input}")
 
-    # get list of statements
-    try:
-        statements = await run_in_threadpool(pipeline.get_statements, input)
-        logger.info(f"statements: {statements}")
-    except Exception as e:
-        logger.error(f"Get statements failed: {e}")
-        raise HTTPException(status_code=status, detail="No statements found")
+#     # get list of statements
+#     try:
+#         statements = await run_in_threadpool(pipeline.get_statements, input)
+#         logger.info(f"statements: {statements}")
+#     except Exception as e:
+#         logger.error(f"Get statements failed: {e}")
+#         raise HTTPException(status_code=status, detail="No statements found")
 
-    verdicts = []
-    fail_search = False
-    for statement in statements:
-        if not statement:
-            continue
-        logger.info(f"Statement: {statement}")
+#     verdicts = []
+#     fail_search = False
+#     for statement in statements:
+#         if not statement:
+#             continue
+#         logger.info(f"Statement: {statement}")
 
-        # get search query
-        try:
-            query = await run_in_threadpool(pipeline.get_search_query, statement)
-            logger.info(f"Search query: {query}")
-        except Exception as e:
-            logger.error(f"Getting search query from statement '{statement}' failed: {e}")
-            continue
+#         # get search query
+#         try:
+#             query = await run_in_threadpool(pipeline.get_search_query, statement)
+#             logger.info(f"Search query: {query}")
+#         except Exception as e:
+#             logger.error(f"Getting search query from statement '{statement}' failed: {e}")
+#             continue
 
-        # searching
-        try:
-            search = await Search(query)
-            logger.info(f"Head of search results: {json.dumps(search)[0:500]}")
-        except Exception as e:
-            fail_search = True
-            logger.error(f"Search '{query}' failed: {e}")
-            continue
+#         # searching
+#         try:
+#             search = await Search(query)
+#             logger.info(f"Head of search results: {json.dumps(search)[0:500]}")
+#         except Exception as e:
+#             fail_search = True
+#             logger.error(f"Search '{query}' failed: {e}")
+#             continue
 
-        # get verdict
-        try:
-            verdict = await run_in_threadpool(pipeline.get_verdict, search_json=search, statement=statement)
-            logger.info(f"Verdict: {verdict}")
-        except Exception as e:
-            logger.error(f"Getting verdict for statement '{statement}' failed: {e}")
-            continue
+#         # get verdict
+#         try:
+#             verdict = await run_in_threadpool(pipeline.get_verdict, search_json=search, statement=statement)
+#             logger.info(f"Verdict: {verdict}")
+#         except Exception as e:
+#             logger.error(f"Getting verdict for statement '{statement}' failed: {e}")
+#             continue
             
-        verdicts.append(verdict)
+#         verdicts.append(verdict)
 
-    if not verdicts:
-        if fail_search:
-            raise HTTPException(status_code=status, detail="Search not available")
-        else:
-            raise HTTPException(status_code=status, detail="No verdicts found")
+#     if not verdicts:
+#         if fail_search:
+#             raise HTTPException(status_code=status, detail="Search not available")
+#         else:
+#             raise HTTPException(status_code=status, detail="No verdicts found")
 
-    report = utils.generate_report_markdown(input, verdicts)
-    return report
+#     report = utils.generate_report_markdown(input, verdicts)
+#     return report
 
 # TODO: multi-stage response
 async def stream_response(path):
-    task = asyncio.create_task(fact_check(path))
+    union = pipeline.Union(path)
+    task = asyncio.create_task(union.final())
     
     # Stream response to prevent timeout, return multi-stage reponses
     elapsed_time = 0

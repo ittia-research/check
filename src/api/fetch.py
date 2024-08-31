@@ -1,6 +1,8 @@
 import httpx
 import json
+from tenacity import retry, stop_after_attempt, wait_fixed
 
+import utils
 from settings import settings
 
 client = httpx.AsyncClient(http2=True, follow_redirects=True)
@@ -10,32 +12,16 @@ class FetchUrl():
     
     def __init__(self, url: str):
         self.url = url
-        self.api = settings.SEARCH_BASE_URL + '/search'
+        self.api = settings.SEARCH_BASE_URL + '/fetch'
         self.timeout = 120  # api request timeout, set higher cause api backend might need to try a few times
 
-    """TODO: add retry"""
-    async def get(self, num: int = 10, all: bool = False):
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(0.1), before_sleep=utils.retry_log_warning, reraise=True)
+    async def get(self):
         _data = {
-            'query': self.query,
-            'num': num,  # how many more urls to get
-            'all': all,
+            'url': self.url,
         }
-        async with client.stream("POST", self.api, json=_data, timeout=self.timeout) as response:
-            buffer = ""
-            async for chunk in response.aiter_text():
-                if chunk.strip():  # Only process non-empty chunks
-                    buffer += chunk
-                    
-                    # Attempt to load the buffer as JSON
-                    try:
-                        # Keep loading JSON until all data is consumed
-                        while buffer:
-                            # Try to load a complete JSON object
-                            rep, index = json.JSONDecoder().raw_decode(buffer)
-                            yield rep
-                            
-                            # Remove the processed part from the buffer
-                            buffer = buffer[index:].lstrip()  # Remove processed JSON and any leading whitespace
-                    except json.JSONDecodeError:
-                        # If we encounter an error, we may not have a complete JSON object yet
-                        continue  # Continue to read more data
+        response = await client.post(self.api, json=_data, timeout=self.timeout)
+        _r = response.json()
+        if _r['status'] != 'ok':
+            raise Exception(f"Fetch url return status not ok: {self.url}")
+        return _r['data']

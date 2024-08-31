@@ -1,7 +1,9 @@
 import asyncio
 import httpx
 import json
+from tenacity import retry, stop_after_attempt, wait_fixed
 
+import utils
 from settings import settings
 
 class SearchWeb():
@@ -23,8 +25,8 @@ class SearchWeb():
     
     TODO: 
       - Is there a more standard way to process streamed JSON?
-      - Add retry.
     """
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(0.1), before_sleep=utils.retry_log_warning, reraise=True)
     async def get(self, num: int = 10, all: bool = False):
         _data = {
             'query': self.query,
