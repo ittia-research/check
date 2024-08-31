@@ -45,10 +45,12 @@ def generate_report_markdown(input_text, verdicts):
     # Add verdicts
     markdown.append("## Fact Check\n")
     for i, verdict in enumerate(verdicts, start=1):
+        weights = verdict['weights']
+        percentage = calculate_percentage(weights['winning'], weights['valid'])
         markdown.append(f"### Statement {i}\n")
         markdown.append(f"**Statement**: {verdict['statement']}\n")
-        markdown.append(f"**Verdict**: `{verdict['verdict']}`\n")
-        markdown.append(f"**Weight**: {verdict['weights']['winning']} out of {verdict['weights']['valid']} ({verdict['weights']['irrelevant']} irrelevant)\n")
+        markdown.append(f"**Verdict**: `{verdict['verdict'].capitalize()}`\n")
+        markdown.append(f"**Weight**: {percentage} (false: {weights['false']}, true: {weights['true']}, irrelevant: {weights['irrelevant']})\n")
         markdown.append(f"**Citations**:\n\n{verdict['citation']}\n")
 
     markdown_str = "\n".join(markdown)
@@ -152,6 +154,14 @@ def get_md5(input):
     md5_hash = hashlib.md5(input.encode())
     return md5_hash.hexdigest()
 
+def calculate_percentage(part, whole):
+    # Check to avoid division by zero
+    if whole == 0:
+        return "N/A"
+    
+    percentage = round((part / whole) * 100)
+    return f"{percentage}%"
+    
 # generate str for stream
 def get_stream(stage: str = 'wait', content = None):
     message = {"stage": stage, "content": content}
