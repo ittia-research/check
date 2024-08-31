@@ -16,6 +16,7 @@ class SearchWeb():
         self.timeout = 600  # api request timeout, set higher cause search backend might need to try a few times
 
         self.client = httpx.AsyncClient(http2=True, follow_redirects=True, timeout=self.timeout)
+        self.urls = []  # all urls got
         
     """
     Get JSON data from API stream output.
@@ -42,8 +43,12 @@ class SearchWeb():
                         while buffer:
                             # Try to load a complete JSON object
                             rep, index = json.JSONDecoder().raw_decode(buffer)
-                            yield rep
-                            
+                            _url = rep['url']
+                            # deduplication
+                            if _url not in self.urls:  # TODO: waht if the new one containes same url but better metadata
+                                self.urls.append(_url)
+                                yield rep
+                                
                             # Remove the processed part from the buffer
                             buffer = buffer[index:].lstrip()  # Remove processed JSON and any leading whitespace
                     except json.JSONDecodeError:
