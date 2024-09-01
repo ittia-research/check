@@ -7,7 +7,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 from urllib.parse import urlparse
 
 import utils
-from api import FetchUrl, SearchWeb
+from api import ReadUrl, SearchWeb
 from modules import SearchQuery, Statements
 from modules import llm_long, Citation, LlamaIndexRM, ContextVerdict
 from settings import settings
@@ -25,6 +25,7 @@ class Union():
     TODO:
       - Add support of verdict standards.
       - Make betetr use of the other data of web search.
+      - Generate or draw class data stracture.
     """
 
     def __init__(self, input: str):
@@ -120,7 +121,7 @@ class Union():
 
     async def update_doc(self, data_doc):
         """Update doc (URL content for now)"""
-        _rep = await FetchUrl(url=data_doc['url']).get()
+        _rep = await ReadUrl(url=data_doc['url']).get()
         data_doc['raw'] = _rep  # dict including URL content and metadata, etc.
         data_doc['title'] = _rep['title']
         data_doc['doc'] = utils.search_result_to_doc(_rep)  # TODO: better process
