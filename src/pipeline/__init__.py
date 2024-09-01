@@ -22,6 +22,9 @@ class Union():
     Run the full cycle from raw input to verdicts of multiple statements.
     Keep data in the class.
 
+    Exception handle:
+      - Mark doc as invalid if failed to read content.
+      
     TODO:
       - Add support of verdict standards.
       - Make betetr use of the other data of web search.
@@ -66,16 +69,19 @@ class Union():
         # update docs
         _task_docs = []
         for _, data_doc in data_source['docs'].items():
-            if not data_doc.get('doc'):  # TODO: better way to decide if update doc
+            if not data_doc.get('doc') and data_doc.get('valid') != False:  # TODO: better way to decide if update doc
                 _task_docs.append(asyncio.create_task(self.update_doc(data_doc)))
         await asyncio.gather(*_task_docs)  # finish all docs processing
 
         # update retriever
-        docs = [v['doc'] for v in data_source['docs'].values()]
-        data_source["retriever"] = await run_in_threadpool(LlamaIndexRM, docs=docs)
-        
-        # update verdict, citation
-        await run_in_threadpool(self.update_verdict_citation, data_source, statement)
+        docs = [v['doc'] for v in data_source['docs'].values() if v.get('valid') != False]
+        if docs:
+            data_source["retriever"] = await run_in_threadpool(LlamaIndexRM, docs=docs)
+            
+            # update verdict, citation
+            await run_in_threadpool(self.update_verdict_citation, data_source, statement)
+        else:
+            data_source['valid'] = False  # TODO: update status after add valid doc
                 
     # Statements has retry set already, do not retry here
     async def get_statements(self):
@@ -121,7 +127,12 @@ class Union():
 
     async def update_doc(self, data_doc):
         """Update doc (URL content for now)"""
-        _rep = await ReadUrl(url=data_doc['url']).get()
+        try:
+            _rep = await ReadUrl(url=data_doc['url']).get()
+        except:
+            data_doc['valid'] = False
+            logging.warning(f"Failed to read URL, mark as invalid: {data_doc['url']}")
+            return
         data_doc['raw'] = _rep  # dict including URL content and metadata, etc.
         data_doc['title'] = _rep['title']
         data_doc['doc'] = utils.search_result_to_doc(_rep)  # TODO: better process
@@ -165,6 +176,8 @@ class Union():
         }
     
         for hostname, verdict in data_statement['sources'].items():
+            if verdict.get('valid') == False:
+                continue
             weight_total += 1
             v = verdict['verdict'].lower()
             if v in sum_citation:

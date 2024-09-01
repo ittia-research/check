@@ -23,5 +23,5 @@ class ReadUrl():
         response = await client.post(self.api, json=_data, timeout=self.timeout)
         _r = response.json()
         if _r['status'] != 'ok':
-            raise Exception(f"Read url return status not ok: {self.url}")
+            raise Exception(f"Read url return status not ok: {self.url}")  # TODO: avoid duplicated retry
         return _r['data']
