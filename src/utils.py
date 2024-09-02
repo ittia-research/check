@@ -65,7 +65,7 @@ def check_input(input):
 
     # check invalid whole query
     invalid_path = ['YOUR_FACT_CHECK_QUERY']
-    common_web_requests = ["favicon.ico"]
+    common_web_requests = ["robots.txt", "favicon.ico"]
     if input in itertools.chain(invalid_path, common_web_requests):
         return False
     

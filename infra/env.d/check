@@ -22,6 +22,6 @@ RERANK_BASE_URL=http://infinity:7997
 RERANK_MODEL_DEPLOY=api
 RERANK_MODEL_NAME=jinaai/jina-reranker-v2-base-multilingual
 
-SEARCH_BASE_URL=https://s.jina.ai
+SEARCH_BASE_URL=https://search.ittia.net
 
 PROJECT_HOSTING_BASE_URL=http://127.0.0.1:8000

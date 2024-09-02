@@ -3,7 +3,17 @@ True, false, or just opinions? Maybe not binary, but a percentage.
 Fact-checking tools to combat disinformation.
 
 ## Get Started
-Online demo: https://check.ittia.net
+Fact-check:
+  - Online demo: `https://check.ittia.net`
+  - API docs: `https://check.ittia.net/doc`
+
+Search backend:
+  - Using self-hosted search backend for better optimization.
+  - API doc: `https://search.ittia.net/doc`
+  - Features:
+    - Use first-class search engine, Google at this moment.
+    - Customize count of sources.
+    - Supports search session: streaming, resume.
 
 ## Design
 Input something.
@@ -14,7 +24,7 @@ Factcheck like what a researcher will do:
   * Use search engine as data source and AI as the verdit.
 
 Output analysis:
-  * MARKDOWN as the default format, JSON as one option. 
+  * MARKDOWN as the default format, JSON optional. 
 
 ### Pholosophy:
 - For new information, doubts as default, factcheck follows.
@@ -26,16 +36,9 @@ Input types:
 - questions
 
 Verdits:
-- true
 - false
-- uncheckable: can't check without more background
-- unavailable: service unavailable
-
-## Support
-Please contact if you can provide resources for this project:
-- AI API access
-- Hardware for hosting
-- Data sources
+- true
+- irrelevant: context processed irrelevant to the statement
 
 ## Todo
 ### Frontend
@@ -64,7 +67,6 @@ Retrieval
 
 ### pipeline
 DSPy:
-- [ ] make dspy.settings apply to sessions only in order to support multiple retrieve index
 - [ ] choose the right LLM temperature
 - [ ] better training datasets
 
@@ -82,7 +84,7 @@ DSPy:
 - [ ] Use multiple sources for factcheck.
 
 ### Stability
-- [ ] AI backend stress test, especially xinference.
+- [ ] Stress test.
 
 ### Extend
 - [ ] To other types of media: image, audio, video, etc.
@@ -97,9 +99,6 @@ DSPy:
 ### Logging
 - [ ] Full logging on chain of events for re-producing and debugging.
 
-### Doc
-- [ ] Show current tech stack.
-
 ### Checkout
 - [ ] Chroma #retrieve
 
@@ -110,12 +109,16 @@ DSPy:
 ## References
 ### Reports
 - [ ] AI-generated misinformation
+
 ### Factcheck
 - https://www.snopes.com
 - https://www.bmi.bund.de/SharedDocs/schwerpunkte/EN/disinformation/examples-of-russian-disinformation-and-the-facts.html
+
 ### Resources
-#### Inference
-- https://console.groq.com/docs/ (free tier)
+Inference
+  - https://console.groq.com/docs/ (free tier)
+Search and fetch:
+  - https://jina.ai/read
 
 ## Acknowledgements
 - TPU Research Cloud team at Google

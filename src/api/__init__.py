@@ -1,2 +1,2 @@
-from .fetch import FetchUrl
+from .read import ReadUrl
 from .search import SearchWeb
