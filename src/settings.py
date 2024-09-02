@@ -12,7 +12,7 @@ class Settings:
         self.EMBEDDING_BASE_URL = os.environ.get("EMBEDDING_BASE_URL") or "http://ollama:11434"
         self.RERANK_BASE_URL = os.environ.get("RERANK_BASE_URL") or "http://xinference:9997/v1"
         self.PROJECT_HOSTING_BASE_URL = os.environ.get("PROJECT_HOSTING_BASE_URL") or "https://check.ittia.net"
-        self.SEARCH_BASE_URL = os.environ.get("SEARCH_BASE_URL") or "https://s.jina.ai"
+        self.SEARCH_BASE_URL = os.environ.get("SEARCH_BASE_URL") or "https://search.ittia.net"
 
         # set RAG models deploy mode
         self.EMBEDDING_MODEL_DEPLOY = os.environ.get("EMBEDDING_MODEL_DEPLOY") or "local"
