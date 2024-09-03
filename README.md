@@ -5,15 +5,15 @@ Fact-checking tools to combat disinformation.
 ## Get Started
 Fact-check:
   - Online demo: `https://check.ittia.net`
-  - API docs: `https://check.ittia.net/doc`
+  - API docs: `https://check.ittia.net/docs`
 
 Search backend:
-  - Using self-hosted search backend for better optimization.
-  - API doc: `https://search.ittia.net/doc`
+  - Using `search.ittia.net` for better optimization.
+  - API doc: `https://search.ittia.net/docs`
   - Features:
-    - Use first-class search engine, Google at this moment.
-    - Customize count of sources.
-    - Supports search session: streaming, resume.
+    - Customizable source count.
+    - Supports search sessions: streaming, resuming.
+    - Utilizes state-of-the-art search engine (currently Google).
 
 ## Design
 Input something.
