@@ -40,6 +40,11 @@ async def stream_response(path):
 async def startup_event():
     pass
 
+"""Redirect /doc to /docs"""
+@app.get("/doc", include_in_schema=False)
+async def _doc_redirect():
+    return RedirectResponse(url="/docs")
+    
 @app.get("/health")
 async def health():
     return {"status": "ok"}
