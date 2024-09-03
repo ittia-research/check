@@ -1,12 +1,11 @@
 import asyncio
-import json
 import logging
-from fastapi import FastAPI, HTTPException, Request, Header
-from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import Response, JSONResponse, HTMLResponse, PlainTextResponse, FileResponse, StreamingResponse
+from fastapi import FastAPI, HTTPException, Header
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse, StreamingResponse
 
-import pipeline, utils, web
-from modules import Search
+import pipeline
+import utils
+import web
 from settings import settings
 
 logging.basicConfig(

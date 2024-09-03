@@ -4,7 +4,7 @@ from settings import settings
 def get_homepage():
     # get tech stack
     stack = utils.get_stack()
-    md = f"## Tech stack\n"
+    md = "## Tech stack\n"
     lines = [md]
     lines.extend([f"**{key}**: {value}" for key, value in stack.items()])
     md = "\n\n".join(lines)

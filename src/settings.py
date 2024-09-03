@@ -1,4 +1,5 @@
-import os, ast
+import ast
+import os
 
 class Settings:
     def __init__(self):
@@ -28,7 +29,7 @@ class Settings:
         # set Index chunk sizes
         try:
             self.INDEX_CHUNK_SIZES = ast.literal_eval(os.environ.get("INDEX_CHUNK_SIZES"))
-        except:
+        except (ValueError, SyntaxError):
             self.INDEX_CHUNK_SIZES = [1024, 256]
 
         """

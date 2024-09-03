@@ -2,6 +2,7 @@ import asyncio
 import dspy
 import logging
 import os
+from fastapi import HTTPException
 from fastapi.concurrency import run_in_threadpool
 from tenacity import retry, stop_after_attempt, wait_fixed
 from urllib.parse import urlparse
@@ -69,12 +70,12 @@ class Union():
         # update docs
         _task_docs = []
         for _, data_doc in data_source['docs'].items():
-            if not data_doc.get('doc') and data_doc.get('valid') != False:  # TODO: better way to decide if update doc
+            if not data_doc.get('doc') and data_doc.get('valid') is not False:  # TODO: better way to decide if update doc
                 _task_docs.append(asyncio.create_task(self.update_doc(data_doc)))
         await asyncio.gather(*_task_docs)  # finish all docs processing
 
         # update retriever
-        docs = [v['doc'] for v in data_source['docs'].values() if v.get('valid') != False]
+        docs = [v['doc'] for v in data_source['docs'].values() if v.get('valid') is not False]
         if docs:
             data_source["retriever"] = await run_in_threadpool(LlamaIndexRM, docs=docs)
             
@@ -129,7 +130,7 @@ class Union():
         """Update doc (URL content for now)"""
         try:
             _rep = await ReadUrl(url=data_doc['url']).get()
-        except:
+        except Exception:
             data_doc['valid'] = False
             logging.warning(f"Failed to read URL, mark as invalid: {data_doc['url']}")
             return
@@ -176,7 +177,7 @@ class Union():
         }
     
         for hostname, verdict in data_statement['sources'].items():
-            if verdict.get('valid') == False:
+            if verdict.get('valid') is False:
                 continue
             weight_total += 1
             v = verdict['verdict'].lower()
