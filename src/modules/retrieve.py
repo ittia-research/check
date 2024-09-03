@@ -1,9 +1,8 @@
-import concurrent.futures
+import dspy
 import logging
 from typing import Optional
 
 from llama_index.core import (
-    Document,
     Settings,
     StorageContext,
     VectorStoreIndex,
@@ -13,15 +12,13 @@ from llama_index.core.retrievers import AutoMergingRetriever
 from llama_index.core.indices.postprocessor import SentenceTransformerRerank
 from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.llms import MockLLM
-
-Settings.llm = MockLLM(max_tokens=256)  # retrieve only, do not use LLM for synthesize
-
-import utils
-from settings import settings
-
 from llama_index.postprocessor.jinaai_rerank import JinaRerank
 
-from integrations import InfinityEmbedding
+import utils
+from integrations import InfinityEmbedding, OllamaEmbedding
+from settings import settings
+
+Settings.llm = MockLLM(max_tokens=256)  # retrieve only, do not use LLM for synthesize
 
 if settings.EMBEDDING_MODEL_DEPLOY == "local":
     embed_model="local:" + settings.EMBEDDING_MODEL_NAME
@@ -131,8 +128,6 @@ class LlamaIndexCustomRetriever():
             contexts = contexts[:rerank_top_n]
             
         return contexts
-
-import dspy
 
 NO_TOP_K_WARNING = "The underlying LlamaIndex retriever does not support top k retrieval. Ignoring k value."
 

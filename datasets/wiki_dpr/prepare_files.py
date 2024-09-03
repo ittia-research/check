@@ -1,4 +1,5 @@
-import os, subprocess
+import os
+import subprocess
 import shutil
 from huggingface_hub import snapshot_download
 from tenacity import retry, stop_after_attempt, wait_fixed
@@ -22,8 +23,6 @@ dir_map = [
     },
 ]
 revision = "main"
-
-import os
 
 def check_exists(folder_path):
     # Check if the folder exists
