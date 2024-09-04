@@ -35,23 +35,40 @@ def clear_md_links(text):
     
     return text
 
-def generate_report_markdown(input_text, verdicts):
+def generate_report_markdown(input_text, summaries):
     markdown = []
 
     # Add original input
     markdown.append("## Original Input\n")
     markdown.append("```\n" + input_text + "\n```\n")
 
-    # Add verdicts
+    # Add summaries
     markdown.append("## Fact Check\n")
-    for i, verdict in enumerate(verdicts, start=1):
-        weights = verdict['weights']
-        percentage = calculate_percentage(weights['winning'], weights['valid'])
+    for i, summary in enumerate(summaries, start=1):
         markdown.append(f"### Statement {i}\n")
-        markdown.append(f"**Statement**: {verdict['statement']}\n")
-        markdown.append(f"**Verdict**: `{verdict['verdict'].capitalize()}`\n")
-        markdown.append(f"**Weight**: {percentage} (false: {weights['false']}, true: {weights['true']}, irrelevant: {weights['irrelevant']})\n")
-        markdown.append(f"**Citations**:\n\n{verdict['citation']}\n")
+        markdown.append(f"**Statement**: {summary['statement']}\n")
+
+        # Add verdict
+        verdict = summary['verdict']
+        if verdict:
+            markdown.append(f"**Verdict**: {verdict.capitalize()}\n")
+        else:
+            markdown.append("**Verdict**: None\n")
+
+        # Add weights
+        weights = summary['weights']
+        if weights:
+            percentage = calculate_percentage(weights['winning'], weights['valid'])
+            markdown.append(f"**Weight**: {percentage} (false: {weights['false']}, true: {weights['true']}, irrelevant: {weights['irrelevant']})\n")
+        else:
+            markdown.append("**Weight**: None\n")
+
+        # Add citation
+        citation = summary['citation']
+        if citation:
+            markdown.append(f"**Citations**:\n\n{citation}\n")
+        else:
+            markdown.append("**Citations**: None\n")
 
     markdown_str = "\n".join(markdown)
     return markdown_str
@@ -114,7 +131,7 @@ def search_json_to_docs(search_json):
     Search JSON results to Llama-Index documents
 
     Do not add metadata for now
-    cause LlamaIndex uses `node.get_content(metadata_mode=MetadataMode.EMBED)` which addeds metadata to text for generate embeddings
+    cause LlamaIndex uses `node.get_content(metadata_mode=MetadataMode.EMBED)` which adds metadata to text for generate embeddings
 
     TODO: pr to llama-index for metadata_mode setting
     """
@@ -134,7 +151,7 @@ def search_result_to_doc(search_result):
     Search result to Llama-Index document
 
     Do not add metadata for now
-    cause LlamaIndex uses `node.get_content(metadata_mode=MetadataMode.EMBED)` which addeds metadata to text for generate embeddings
+    cause LlamaIndex uses `node.get_content(metadata_mode=MetadataMode.EMBED)` which adds metadata to text for generate embeddings
 
     TODO: pr to llama-index for metadata_mode setting
     """

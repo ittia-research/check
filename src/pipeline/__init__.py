@@ -28,13 +28,13 @@ class Union():
       
     TODO:
       - Add support of verdict standards.
-      - Make betetr use of the other data of web search.
-      - Generate or draw class data stracture.
+      - Make better use of the other data of web search.
+      - Generate or draw class data structure.
     """
 
     def __init__(self, input: str):
         """Avoid run I/O intense functions here to better support async"""
-        self.input = input  # raw input to analize
+        self.input = input  # raw input to analyze
         self.data = {}  # contains all intermediate and final data
 
     async def final(self):
@@ -43,8 +43,8 @@ class Union():
         await asyncio.gather(*_task)
 
         # update reports
-        _sum = [v['summary'] for v in self.data.values()]
-        self.reports = utils.generate_report_markdown(self.input, _sum)
+        _summaries = [v['summary'] for v in self.data.values()]
+        self.reports = utils.generate_report_markdown(self.input, _summaries)
 
         return self.reports
         
@@ -65,7 +65,7 @@ class Union():
         self.update_summary(data_statement)
 
     async def _pipe_source(self, data_source, statement):
-        """Update docs and then update retriever, verdic, citation"""
+        """Update docs and then update retriever, verdict, citation"""
         
         # update docs
         _task_docs = []
@@ -160,12 +160,29 @@ class Union():
     def update_summary(self, data_statement):
         """
         Calculate and summarize the verdicts of multiple sources.
+        Choose the one verdict with highest weight and use its citation as final.
+
         Introduce some weights:
           - total: the number of total verdicts
           - valid: the number of verdicts in the desired categories
           - winning: the count of the winning verdict
-          - and count of verdicts of each desiered categories
+          - and count of verdicts of each desired categories
+
+        Exceptions:
+          - If no valid verdicts, generate summary with statement but verdict related keys set to None.
+
+        TODO: maybe output all citations instead of the winning one only.
         """
+
+        statement = data_statement['statement']
+
+        # initial summary
+        data_statement['summary'] = {
+            "statement": data_statement['statement'],
+            "verdict": None,
+            "citation": None, 
+            "weights": None, 
+        }
         
         weight_total = 0
         weight_valid = 0
@@ -176,21 +193,30 @@ class Union():
             "irrelevant": {"citation": [], "weight": 0},
         }
     
-        for hostname, verdict in data_statement['sources'].items():
-            if verdict.get('valid') is False:
+        for hostname, source in data_statement['sources'].items():
+            # skip invalid source
+            if source.get('valid') is False:
                 continue
+
+            # generate citations, add to groups, calculate weights
             weight_total += 1
-            v = verdict['verdict'].lower()
+            v = source['verdict'].lower()
             if v in sum_citation:
                 weight_valid += 1
-                citation = f"{verdict['citation']}  *source: {hostname}*\n\n"
+                citation = f"{source['citation']}  *source: {hostname}*\n\n"  # TODO: more accurate way to construct source
                 sum_citation[v]['citation'].append(citation)
                 sum_citation[v]['weight'] += 1
                 if v == 'true':
                     sum_score += 1
                 elif v == 'false':
                     sum_score -= 1
+
+        # if no valid verdict found
+        if weight_valid == 0:
+            logging.warning(f"No valid verdict found for statement: {statement}")
+            return  # return with verdicts None
     
+        # get the final verdict
         if sum_score > 0:
             verdict = "true"
         elif sum_score < 0:
@@ -198,18 +224,18 @@ class Union():
         else:
             verdict = "irrelevant"
     
+        # generate the final citation
         citation = ''.join(sum_citation[verdict]['citation'])
-        if not citation:
-            raise Exception("No citation found after summarize")
     
+        # add all weights to the summary
         weights = {"total": weight_total, "valid": weight_valid, "winning": sum_citation[verdict]['weight']}
         for key in sum_citation.keys():
             weights[key] = sum_citation[key]['weight']
             
-        data_statement['summary'] = {
+        # set summary for this statement
+        data_statement['summary'].update({
             "verdict": verdict, 
             "citation": citation, 
             "weights": weights, 
-            "statement": data_statement['statement'],
-        }
-        
+        })
+        return
