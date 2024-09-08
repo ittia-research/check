@@ -129,7 +129,12 @@ class Union():
     async def update_doc(self, data_doc):
         """Update doc (URL content for now)"""
         try:
-            _rep = await ReadUrl(url=data_doc['url']).get()
+            _read_url = ReadUrl(url=data_doc['url'])
+            _rep = await _read_url.get()
+            
+            # check source read `status` and content
+            if _rep['status'] != 'ok' or not _rep['content']:
+                raise Exception
         except Exception:
             data_doc['valid'] = False
             logging.warning(f"Failed to read URL, mark as invalid: {data_doc['url']}")

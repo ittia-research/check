@@ -7,7 +7,15 @@ from settings import settings
 client = httpx.AsyncClient(http2=True, follow_redirects=True)
 
 class ReadUrl():
-    """Read one single url via API fetch endpoint"""
+    """
+    Read one single url via API fetch endpoint.
+    Retry failed read at API server end not here.
+    
+    API response status:
+      - ok
+      - error
+      - not_implemented: fetch ok but not able to read content
+    """
     
     def __init__(self, url: str):
         self.url = url
@@ -20,7 +28,4 @@ class ReadUrl():
             'url': self.url,
         }
         response = await client.post(self.api, json=_data, timeout=self.timeout)
-        _r = response.json()
-        if _r['status'] != 'ok':
-            raise Exception(f"Read url return status not ok: {self.url}")  # TODO: avoid duplicated retry
-        return _r['data']
+        return response.json()
