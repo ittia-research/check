@@ -32,9 +32,16 @@ class Check():
       - Generate or draw class data structure.
     """
 
-    def __init__(self, input: str):
-        """Avoid run I/O intense functions here to better support async"""
-        self.input = input  # raw input to analyze
+    def __init__(self, input: str, format: str = 'markdown'):
+        """
+        Args:
+          - input: raw input to check
+          - format: markdown | json, format of the returning response
+
+        Notes: avoid run I/O intense functions here to better support async
+        """
+        self.input = input
+        self.format = format
         self.data = {}  # contains all intermediate and final data
 
     async def final(self):
@@ -42,9 +49,17 @@ class Check():
         _task = [asyncio.create_task(self._pipe_statement(data_statement)) for data_statement in self.data.values()]
         await asyncio.gather(*_task)
 
-        # update reports
-        _summaries = [v['summary'] for v in self.data.values()]
-        self.reports = utils.generate_report_markdown(self.input, _summaries)
+        # List of all summaries
+        summaries = [v['summary'] for v in self.data.values()]
+
+        # Update reports
+        if self.format == 'json':
+            self.reports = {
+                'input': self.input,
+                'summaries': summaries,
+            }
+        else:
+            self.reports = utils.generate_report_markdown(self.input, summaries)
 
         return self.reports
         

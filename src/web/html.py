@@ -23,7 +23,8 @@ html_browser = """
             try {
                 const response = await fetch(window.location.href, {
                     headers: {
-                        "Accept": "text/markdown"
+                        "X-Return-Format": "markdown",
+                        "Accept": "text/event-stream",
                     }
                 });
 
