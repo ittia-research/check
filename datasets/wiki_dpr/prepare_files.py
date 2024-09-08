@@ -46,19 +46,19 @@ def move_files_subfolders(source_folder, destination_folder):
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), reraise=True) 
 def download_hf_folder(repo_dir, local_dir):
-    downlaod_dir = os.path.join(local_dir, '.downlaod')
+    download_dir = os.path.join(local_dir, '.download')
 
-    os.makedirs(downlaod_dir, exist_ok=True)
+    os.makedirs(download_dir, exist_ok=True)
 
     snapshot_download(
         repo_id=repo_id, 
         repo_type=repo_type, 
         revision=revision, 
         allow_patterns=f"{repo_dir}/*",
-        local_dir=downlaod_dir
+        local_dir=download_dir
     )
 
-    return downlaod_dir
+    return download_dir
 
 for map in dir_map:
     repo_dir = map['repo_dir']
@@ -68,8 +68,8 @@ for map in dir_map:
         print(f"local dir '{local_dir}' exists and not empty, skip download")
         continue
 
-    downlaod_dir = download_hf_folder(repo_dir, local_dir)
-    _source_dir = os.path.join(downlaod_dir, repo_dir)
+    download_dir = download_hf_folder(repo_dir, local_dir)
+    _source_dir = os.path.join(download_dir, repo_dir)
     move_files_subfolders(_source_dir, local_dir)
 
     print(f"Downloaded: {repo_dir} to {local_dir}")
