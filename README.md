@@ -18,24 +18,24 @@ Search backend:
 ## Design
 Input something.
 
-Analize percentage of facts and opnions.
+Analyze percentage of facts and opinions.
 
-Factcheck like what a researcher will do:
-  * Use search engine as data source and AI as the verdit.
+Fact-check like what a researcher will do:
+  * Use search engine as data source and AI as the verdict.
 
 Output analysis:
   * MARKDOWN as the default format, JSON optional. 
 
-### Pholosophy:
-- For new information, doubts as default, factcheck follows.
+### Philosophy:
+- For new information, doubts as default, fact-check follows.
 
 ### Elements
 Input types:
 - facts
-- opnions
+- opinions
 - questions
 
-Verdits:
+Verdicts:
 - false
 - true
 - irrelevant: context processed irrelevant to the statement
@@ -43,18 +43,18 @@ Verdits:
 ## Todo
 ### Frontend
 - [ ] API: Input string or url, output analysis
-- [ ] Optional more detailed output: correction, explannation, references
+- [ ] Optional more detailed output: correction, explanation, references
 
 ### Backend
 - [ ] Get list of facts from input, improve performance
 - [ ] Get search results of each facts and check if they are true or false
-- [ ] Get weight of facts and opnions
+- [ ] Get weight of facts and opinions
 - [ ] Compare different search engines.
 - [ ] Add support for URL input
 - [ ] Performance benchmark.
 
 LLM
-- [ ] Better way to handle LLM output formating: list, JSON.
+- [ ] Better way to handle LLM output formatting: list, JSON.
 
 Embedding:
 - [ ] chunk size optimize
@@ -71,7 +71,7 @@ DSPy:
 - [ ] better training datasets
 
 ### Retrival
-- [ ] Better retrival solution: high performance, concurrency, multiple index, index editable.
+- [ ] Better retrieval solution: high performance, concurrency, multiple index, index editable.
 - [ ] Getting more sources when needed.
 
 ### Verdict
@@ -81,17 +81,17 @@ DSPy:
 - [ ] Evaluate MLOps pipeline
   - https://kitops.ml
 - [ ] Evaluate data quality of searching and url fetching. Better error handle.
-- [ ] Use multiple sources for factcheck.
+- [ ] Use multiple sources for fact-check.
 
 ### Stability
 - [ ] Stress test.
 
 ### Extend
 - [ ] To other types of media: image, audio, video, etc.
-- [ ] Shall we try to anser questions if provided.
+- [ ] Shall we try to answer questions if provided.
 - [ ] Multi-language support.
 - [ ] Add logging and long-term memory.
-- [ ] Intergrate with other factcheck services.
+- [ ] Integrate with other fact-check services.
 
 ### Calculate
 - [ ] Shall we calculate percentage of true and false in the input? Any better calculation than items count?
@@ -103,14 +103,14 @@ DSPy:
 - [ ] Chroma #retrieve
 
 ## Issues
-- [ ] Uses many different types of models, diffcult for performance optimization and maintenance.
-- [ ] LLM verdit wrong contradict to context provided.
+- [ ] Uses many different types of models, difficult for performance optimization and maintenance.
+- [ ] LLM verdict wrong contradict to context provided.
 
 ## References
 ### Reports
 - [ ] AI-generated misinformation
 
-### Factcheck
+### Fact-check
 - https://www.snopes.com
 - https://www.bmi.bund.de/SharedDocs/schwerpunkte/EN/disinformation/examples-of-russian-disinformation-and-the-facts.html
 

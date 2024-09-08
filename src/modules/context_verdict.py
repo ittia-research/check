@@ -33,7 +33,7 @@ class GenerateSearchQuery(dspy.Signature):
     
 """
 SimplifiedBaleen module
-Avoid unnecessary content in module cause MIPROv2 optimizer will analize modules.
+Avoid unnecessary content in module cause MIPROv2 optimizer will analyze modules.
 
 To-do: 
   - retrieve latest facts

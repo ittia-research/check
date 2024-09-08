@@ -18,15 +18,15 @@ app = FastAPI()
 
 # TODO: multi-stage response
 async def stream_response(path):
-    union = pipeline.Union(path)
-    task = asyncio.create_task(union.final())
+    pipeline_check = pipeline.Check(path)
+    task = asyncio.create_task(pipeline_check.final())
     
-    # Stream response to prevent timeout, return multi-stage reponses
+    # Stream response to prevent timeout, return multi-stage responses
     elapsed_time = 0
     _check_interval = 0.2
     while not task.done():
-        if elapsed_time > settings.STREAM_TIME_OUT:  # waitting timeout
-            raise Exception(f"Waitting fact check results reached time limit: {settings.STREAM_TIME_OUT} seconds")
+        if elapsed_time > settings.STREAM_TIME_OUT:  # waiting timeout
+            raise Exception(f"Waiting fact check results reached time limit: {settings.STREAM_TIME_OUT} seconds")
         if elapsed_time % 30 == 0:  # return wait messages from time to time
             yield utils.get_stream(stage='processing', content='### Processing ...')
         await asyncio.sleep(_check_interval)
@@ -53,12 +53,12 @@ async def status():
     _status = utils.get_status()
     return _status
 
-# TODO: integrade error handle with output
+# TODO: integrate error handle with output
 @app.get("/{input:path}", response_class=PlainTextResponse)
 async def catch_all(input: str, accept: str = Header(None)):
     try:
         if not utils.check_input(input):
-            return HTMLResponse(status_code=404, content='not found')  # filter brower background requests
+            return HTMLResponse(status_code=404, content='not found')  # filter browser background requests
             
         if accept == "text/markdown":
             if not input:

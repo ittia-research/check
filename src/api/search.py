@@ -46,7 +46,7 @@ class SearchWeb():
                             rep, index = json.JSONDecoder().raw_decode(buffer)
                             _url = rep['url']
                             # deduplication
-                            if _url not in self.urls:  # TODO: waht if the new one containes same url but better metadata
+                            if _url not in self.urls:  # TODO: what if the new one contains same url but better metadata
                                 self.urls.append(_url)
                                 yield rep
                                 

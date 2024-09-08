@@ -18,7 +18,7 @@ optimizer_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"../o
 context_verdict = ContextVerdict()
 context_verdict.load(optimizer_path)
 
-class Union():
+class Check():
     """
     Run the full cycle from raw input to verdicts of multiple statements.
     Keep data in the class.

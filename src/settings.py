@@ -35,7 +35,7 @@ class Settings:
         """
         embedding batch:
             - set higher to improve performance: overcome network latency, etc.
-            - embedding servers usually have the capacity to divide too large batch themself
+            - embedding servers usually have the capacity to divide too large batch on their own
         """
         self.EMBEDDING_BATCH_SIZE = os.environ.get("EMBEDDING_BATCH_SIZE") or 1024
 

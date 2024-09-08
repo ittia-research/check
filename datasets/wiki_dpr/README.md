@@ -1,8 +1,8 @@
 ## About
 - Dataset: https://github.com/facebookresearch/DPR/blob/main/dpr/data/download_data.py
-    - direct downlaod link: `https://dl.fbaipublicfiles.com/dpr/wikipedia_split/psgs_w100.tsv.gz`
+    - direct download link: `https://dl.fbaipublicfiles.com/dpr/wikipedia_split/psgs_w100.tsv.gz`
 - Generate index for the ColBERTv2 model
-- Downlaod the generated index: https://huggingface.co/datasets/ittia/wiki_dpr
+- Download the generated index: https://huggingface.co/datasets/ittia/wiki_dpr
 - Start a retrieve server
 
 ## How-to
