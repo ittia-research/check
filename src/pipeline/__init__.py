@@ -188,12 +188,13 @@ class Check():
           - winning: the count of the winning verdict
           - and count of verdicts of each desired categories
 
-        Verdicts:
-          - true
-          - false
-          - irrelevant
-          - tie: number of true and false verdicts are the same and above zero
-          - None: no valid verdict found
+        Response:
+            Verdicts:
+                - true
+                - false
+                - irrelevant
+                - tie: number of true and false verdicts are the same and above zero
+                - None: no valid verdict found
 
         Exceptions:
           - If no valid verdicts, generate summary with statement but verdict related keys set to None.
@@ -203,21 +204,21 @@ class Check():
 
         statement = data_statement['statement']
 
-        # initial summary
-        data_statement['summary'] = {
-            "statement": data_statement['statement'],
+        # initialize summary
+        data_summary = data_statement['summary'] = {
+            "statement": statement,
             "verdict": None,
-            "citation": None, 
-            "weights": None, 
+            "weights": {}, 
+            "citations": {}, 
         }
         
         weight_total = 0
         weight_valid = 0
         sum_score = 0
         sum_citation = {
-            "true": {"citation": [], "weight": 0},
-            "false": {"citation": [], "weight": 0},
-            "irrelevant": {"citation": [], "weight": 0},
+            "true": {"citations": [], "weight": 0},
+            "false": {"citations": [], "weight": 0},
+            "irrelevant": {"citations": [], "weight": 0},
         }
     
         for hostname, source in data_statement['sources'].items():
@@ -230,8 +231,11 @@ class Check():
             v = source['verdict'].lower()
             if v in sum_citation:  # Checking if verdict are valid here, do not add non-valid verdict to sum_citation keys prior
                 weight_valid += 1
-                citation = f"{source['citation']}  *source: {hostname}*\n\n"  # TODO: more accurate way to construct source
-                sum_citation[v]['citation'].append(citation)
+                citation = {
+                    'citation': source['citation'],
+                    'source': f"http://{hostname}",
+                  }
+                sum_citation[v]['citations'].append(citation)
                 sum_citation[v]['weight'] += 1
                 if v == 'true':
                     sum_score += 1
@@ -243,7 +247,14 @@ class Check():
             logging.warning(f"No valid verdict found for statement: {statement}")
             return  # return with verdicts None
     
-        # get the final verdict
+        """
+        Get the final verdict.
+
+        TODO:
+            - Some source should have different weights. For example:
+              - A well-known reliable source compare to a average one.
+              - One has more latest info and the statement is time sensitive.
+        """
         if sum_score > 0:
             verdict = "true"
         elif sum_score < 0:
@@ -252,22 +263,17 @@ class Check():
             # If positive/negative verdict are not 0, set verdict to tie.
             if sum_citation['true']['weight'] > 0:
                 verdict = 'tie'
-                sum_citation['tie'] = {"citation": [], "weight": 0}  # add keys for processing after
+                sum_citation['tie'] = {"citations": [], "weight": 0}  # add keys for processing after
             else:
                 verdict = "irrelevant"
-    
-        # generate the final citation
-        citation = ''.join(sum_citation[verdict]['citation'])
+        data_summary['verdict'] = verdict
     
         # add all weights to the summary
-        weights = {"total": weight_total, "valid": weight_valid, "winning": sum_citation[verdict]['weight']}
+        data_summary['weights'] = {"total": weight_total, "valid": weight_valid, "winning": sum_citation[verdict]['weight']}
         for key in sum_citation.keys():
-            weights[key] = sum_citation[key]['weight']
+            data_summary['weights'][key] = sum_citation[key]['weight']
             
-        # set summary for this statement
-        data_statement['summary'].update({
-            "verdict": verdict, 
-            "citation": citation, 
-            "weights": weights, 
-        })
-        return
+        # Gather all non-empty citations
+        for key, value in sum_citation.items():
+            if value['citations']:
+                data_summary['citations'][key] = value['citations']
