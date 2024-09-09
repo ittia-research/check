@@ -5,7 +5,7 @@ Fact-checking tools to combat disinformation.
 ## Get Started
 Online demo: `https://check.ittia.net`
 
-Use pip package `ittia-check` to connect to API: https://github.com/ittia-research/check/packages/ittia_check
+Use pip package `ittia-check` to connect to API: https://github.com/ittia-research/check/tree/main/packages/ittia_check
 
 API docs: `https://check.ittia.net/docs`
 
