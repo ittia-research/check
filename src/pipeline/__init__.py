@@ -188,6 +188,13 @@ class Check():
           - winning: the count of the winning verdict
           - and count of verdicts of each desired categories
 
+        Verdicts:
+          - true
+          - false
+          - irrelevant
+          - tie: number of true and false verdicts are the same and above zero
+          - None: no valid verdict found
+
         Exceptions:
           - If no valid verdicts, generate summary with statement but verdict related keys set to None.
 
@@ -221,7 +228,7 @@ class Check():
             # generate citations, add to groups, calculate weights
             weight_total += 1
             v = source['verdict'].lower()
-            if v in sum_citation:
+            if v in sum_citation:  # Checking if verdict are valid here, do not add non-valid verdict to sum_citation keys prior
                 weight_valid += 1
                 citation = f"{source['citation']}  *source: {hostname}*\n\n"  # TODO: more accurate way to construct source
                 sum_citation[v]['citation'].append(citation)
@@ -231,7 +238,7 @@ class Check():
                 elif v == 'false':
                     sum_score -= 1
 
-        # if no valid verdict found
+        # Return None if no valid verdict found
         if weight_valid == 0:
             logging.warning(f"No valid verdict found for statement: {statement}")
             return  # return with verdicts None
@@ -242,7 +249,12 @@ class Check():
         elif sum_score < 0:
             verdict = "false"
         else:
-            verdict = "irrelevant"
+            # If positive/negative verdict are not 0, set verdict to tie.
+            if sum_citation['true']['weight'] > 0:
+                verdict = 'tie'
+                sum_citation['tie'] = {"citation": [], "weight": 0}  # add keys for processing after
+            else:
+                verdict = "irrelevant"
     
         # generate the final citation
         citation = ''.join(sum_citation[verdict]['citation'])
