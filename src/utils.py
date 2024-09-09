@@ -3,6 +3,7 @@ import itertools
 import json
 import logging
 import re
+from typing import List
 from llama_index.core import Document
 
 from settings import settings
@@ -35,6 +36,19 @@ def clear_md_links(text):
     
     return text
 
+def _get_md_citations_single_verdict(citations: List, title: str = None):
+    """Generate markdown paragraph of all citations of one verdict"""
+    if title:
+        md = f"#### {title}\n\n"
+    else:
+        md = ''
+    
+    for i in citations:
+        md += f"{i['citation']}  *source: {i['source']}*\n\n"
+
+    return md
+    
+
 def generate_report_markdown(input_text, summaries):
     markdown = []
 
@@ -63,10 +77,17 @@ def generate_report_markdown(input_text, summaries):
         else:
             markdown.append("**Weight**: None\n")
 
-        # Add citation
-        citation = summary['citation']
-        if citation:
-            markdown.append(f"**Citations**:\n\n{citation}\n")
+        # Add all citations
+        citations = summary['citations']
+        if citations:
+            markdown.append("**Citations**:\n\n")
+            # Add wining verdict
+            markdown.append(_get_md_citations_single_verdict(citations=citations.get(verdict), title=f"wining: {verdict}"))
+            # Add all other verdicts
+            for k, v in citations.items():
+                if k == verdict:
+                    continue
+                markdown.append(_get_md_citations_single_verdict(citations=v, title=f"other: {k}"))
         else:
             markdown.append("**Citations**: None\n")
 

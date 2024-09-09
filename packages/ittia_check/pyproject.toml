@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "ittia-check"
+version = "0.1.0"
+description = "Connect to the ITTIA Check API or self-hosted ones"
+authors = ["ITTIA <contact@ittia.net>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/ittia-research/check"
+repository = "https://github.com/ittia-research/check"
+keywords = ["fact-check", "ai", "llm", "rag"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+httpx = "^0.27.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
