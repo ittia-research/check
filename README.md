@@ -3,11 +3,13 @@ True, false, or just opinions? Maybe not binary, but a percentage.
 Fact-checking tools to combat disinformation.
 
 ## Get Started
-Fact-check:
-  - Online demo: `https://check.ittia.net`
-  - API docs: `https://check.ittia.net/docs`
+Online demo: `https://check.ittia.net`
 
-Search backend:
+Use pip package `ittia-check` to connect to API: https://github.com/ittia-research/check/packages/ittia_check
+
+API docs: `https://check.ittia.net/docs`
+
+### Search backend
   - Using `search.ittia.net` for better optimization.
   - API doc: `https://search.ittia.net/docs`
   - Features:
