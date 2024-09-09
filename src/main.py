@@ -29,7 +29,7 @@ async def stream_response(input: str, format: str):
         if elapsed_time > settings.STREAM_TIME_OUT:  # waiting timeout
             raise Exception(f"Waiting fact check results reached time limit: {settings.STREAM_TIME_OUT} seconds")
         if elapsed_time % 30 == 0:  # return wait messages from time to time
-            yield utils.get_stream(stage='processing', content='### Processing ...')
+            yield utils.get_stream(stage='processing', content='processing ...')
         await asyncio.sleep(_check_interval)
         elapsed_time = round(elapsed_time + _check_interval, 1)
     
