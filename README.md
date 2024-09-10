@@ -2,20 +2,36 @@ True, false, or just opinions? Maybe not binary, but a percentage.
 
 Fact-checking tools to combat disinformation.
 
+## How It Works
+Extract a list of statements from given text.  
+For each statement search via search engine and read the top URLs.  
+For each hostname as one source, extract most related info from the read content.  
+For each sources, generate one verdict and citation with the extracted content.  
+Combine all verdicts of one statements into a final verdict.  
+Return a list of statements with verdicts, citations and others related.
+
 ## Get Started
-Online demo: `https://check.ittia.net`
+Online demo: https://check.ittia.net
 
-Use pip package `ittia-check` to connect to API: https://github.com/ittia-research/check/tree/main/packages/ittia_check
+Using existing API: https://github.com/ittia-research/check/tree/main/packages/ittia_check
 
-API docs: `https://check.ittia.net/docs`
+### Self-hosting API Server
+Main components:
+  - Check server: see docker-compose.yml
+  - LLM: any OpenAI compatible API, self-hosting via vllm or Ollama
+  - Embedding: self-hosting via Ollama or Infinity
+  - Rerank: self-hosting via Infinity
+  - Search: https://search.ittia.net
+
+### Other Tools
+- Start a wiki_dpr retrieval server (ColBERTv2) for development: https://github.com/ittia-research/check/tree/main/datasets/wiki_dpr
 
 ### Search backend
-  - Using `search.ittia.net` for better optimization.
-  - API doc: `https://search.ittia.net/docs`
-  - Features:
-    - Customizable source count.
-    - Supports search sessions: streaming, resuming.
-    - Utilizes state-of-the-art search engine (currently Google).
+- Using `search.ittia.net` for better optimization.
+- Features:
+  - Customizable source count.
+  - Supports search sessions: streaming, resuming.
+  - Utilizes state-of-the-art search engine (currently Google).
 
 ## Design
 Input something.
@@ -40,87 +56,13 @@ Input types:
 Verdicts:
 - false
 - true
+- tie: false and true verdicts counts are the same and above zero
 - irrelevant: context processed irrelevant to the statement
 
-## Todo
-### Frontend
-- [ ] API: Input string or url, output analysis
-- [ ] Optional more detailed output: correction, explanation, references
-
-### Backend
-- [ ] Get list of facts from input, improve performance
-- [ ] Get search results of each facts and check if they are true or false
-- [ ] Get weight of facts and opinions
-- [ ] Compare different search engines.
-- [ ] Add support for URL input
-- [ ] Performance benchmark.
-
-LLM
-- [ ] Better way to handle LLM output formatting: list, JSON.
-
-Embedding:
-- [ ] chunk size optimize
-
-Contexts
-- [ ] Filter out non-related contexts before send for verdict
-
-Retrieval
-- [ ] Retrieve the latest info when facts might change
-
-### pipeline
-DSPy:
-- [ ] choose the right LLM temperature
-- [ ] better training datasets
-
-### Retrival
-- [ ] Better retrieval solution: high performance, concurrency, multiple index, index editable.
-- [ ] Getting more sources when needed.
-
-### Verdict
-- [ ] Set final verdict standards.
-
-### Toolchain
-- [ ] Evaluate MLOps pipeline
-  - https://kitops.ml
-- [ ] Evaluate data quality of searching and url fetching. Better error handle.
-- [ ] Use multiple sources for fact-check.
-
-### Stability
-- [ ] Stress test.
-
-### Extend
-- [ ] To other types of media: image, audio, video, etc.
-- [ ] Shall we try to answer questions if provided.
-- [ ] Multi-language support.
-- [ ] Add logging and long-term memory.
-- [ ] Integrate with other fact-check services.
-
-### Calculate
-- [ ] Shall we calculate percentage of true and false in the input? Any better calculation than items count?
-
-### Logging
-- [ ] Full logging on chain of events for re-producing and debugging.
-
-### Checkout
-- [ ] Chroma #retrieve
-
-## Issues
-- [ ] Uses many different types of models, difficult for performance optimization and maintenance.
-- [ ] LLM verdict wrong contradict to context provided.
-
 ## References
-### Reports
-- [ ] AI-generated misinformation
-
 ### Fact-check
 - https://www.snopes.com
 - https://www.bmi.bund.de/SharedDocs/schwerpunkte/EN/disinformation/examples-of-russian-disinformation-and-the-facts.html
-
-### Resources
-Inference
-  - https://console.groq.com/docs/ (free tier)
-Search and fetch:
-  - https://jina.ai/read
 
 ## Acknowledgements
 - TPU Research Cloud team at Google

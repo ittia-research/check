@@ -8,15 +8,7 @@ services:
       - ./infra/env.d/check
     ports:
       - 8000:8000
-    restart: always
-    
-  ollama:
-    image: ollama/ollama
-    container_name: ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - /data/volumes/ollama:/root/.ollama
+    # Remove the GPU part belwo if not inferencing locally
     deploy:
       resources:
         reservations:
@@ -25,6 +17,21 @@ services:
               count: all
               capabilities: [gpu]
     restart: always
+
+  # Using vllm for LLM inference on Google TPU
+  # Tested on Google v4-8  
+  vllm:                                                                                                                                                                                                                                
+    image: ittia/vllm:0.6.0-tpu                                                                                                                                                                                                        
+    privileged: true                                                                                                                                                                                                                   
+    ports:                                                                                                                                                                                                                             
+      - "8010:8010"                                                                                                                                                                                                                    
+    shm_size: 128G                                                                                                                                                                                                                     
+    volumes:                                                                                                                                                                                                                           
+      - /mnt/cache:/root/.cache                                                                                                                                                                                                          
+    env_file:                                                                                                                                                                                                                          
+      - ./env.d/huggingface                                                                                                                                                                                                            
+    command: vllm serve mistralai/Mistral-Nemo-Instruct-2407 --tensor-parallel-size 4 --port 8010 --trust-remote-code --max-model-len 12288                                                                                            
+    restart: always 
 
   # Infinity supports embedding and rerank models, v2 version supports serving multiple models
   infinity:
@@ -38,6 +45,25 @@ services:
       - ./infra/env.d/infinity
       - ./infra/env.d/huggingface
     command: ["v2"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: always
+
+  # Services below are not actively in use.
+  # Keeps here for reference.
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - /data/volumes/ollama:/root/.ollama
     deploy:
       resources:
         reservations:
