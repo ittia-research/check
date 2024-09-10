@@ -2,6 +2,14 @@ True, false, or just opinions? Maybe not binary, but a percentage.
 
 Fact-checking tools to combat disinformation.
 
+## How It Works
+Extract a list of statements from given text.  
+For each statement search via search engine and read the top URLs.  
+For each hostname as one source, extract most related info from the read content.  
+For each sources, generate one verdict and citation with the extracted content.  
+Combine all verdicts of one statements into a final verdict.  
+Return a list of statements with verdicts, citations and others related.
+
 ## Get Started
 Online demo: https://check.ittia.net
 
@@ -55,12 +63,6 @@ Verdicts:
 ### Fact-check
 - https://www.snopes.com
 - https://www.bmi.bund.de/SharedDocs/schwerpunkte/EN/disinformation/examples-of-russian-disinformation-and-the-facts.html
-
-### Resources
-Inference
-  - https://console.groq.com/docs/ (free tier)
-Search and fetch:
-  - https://jina.ai/read
 
 ## Acknowledgements
 - TPU Research Cloud team at Google
