@@ -85,10 +85,12 @@ DSPy:
 - [ ] Evaluate data quality of searching and url fetching. Better error handle.
 - [ ] Use multiple sources for fact-check.
 
-### Stability
-- [ ] Stress test.
+### Infra
+- [ ] Stress test
+- [ ] Meaningful health endpoint
+- [ ] Monitoring service health
 
-### Extend
+### Extend 
 - [ ] To other types of media: image, audio, video, etc.
 - [ ] Shall we try to answer questions if provided.
 - [ ] Multi-language support.
