@@ -1,9 +1,16 @@
+## Roadmap
+- [ ] Check one line of single statement.
+- [ ] Check long paragraphs or a content source (URL, file, etc.)
+  - [ ] What's the ultimate goals?
+- [ ] Long-term memory and caching.
+- [ ] Fact-check standards and database.
 
-## Frontend
+## Work
+### Frontend
 - [ ] API: Input string or url, output analysis
 - [ ] Optional more detailed output: correction, explanation, references
 
-## Backend
+### Backend
 - [ ] Get list of facts from input, improve performance
 - [ ] Get search results of each facts and check if they are true or false
 - [ ] Get weight of facts and opinions
@@ -23,48 +30,49 @@ Contexts
 Retrieval
 - [ ] Retrieve the latest info when facts might change
 
-## pipeline
-DSPy:
-- [ ] choose the right LLM temperature
-- [ ] better training datasets
+### pipeline
+DSPy
+  - [ ] choose the right LLM temperature
+  - [ ] better training datasets
 
-## Retrieval
+### Retrieval
 - [ ] Better retrieval solution: high performance, concurrency, multiple index, index editable.
 - [ ] Getting more sources when needed.
 
-## Verdict
+### Verdict
 - [ ] Set final verdict standards.
 
-## Toolchain
-- [ ] Evaluate MLOps pipeline
-  - https://kitops.ml
+### Toolchain
+- [ ] Evaluate MLOps pipeline: https://kitops.ml
 - [ ] Evaluate data quality of searching and url fetching. Better error handle.
 - [ ] Use multiple sources for fact-check.
 
-## Infra
+### Infra
 - [ ] Stress test
 - [ ] Meaningful health endpoint
 - [ ] Monitoring service health
 
-## Extend 
+### Calculate
+- [ ] Shall we calculate percentage of true and false in the input? Any better calculation than items count?
+
+### Logging
+- [ ] Full logging on chain of events for re-producing and debugging.
+
+### Issues
+- [ ] Uses many different types of models, difficult for performance optimization and maintenance.
+- [ ] LLM verdict wrong contradict to context provided.
+
+### Data
+- [ ] A standard on save fact-check related data.
+- [ ] Store fact-check data with standards.
+
+### Research
+- [ ] Chroma #retrieve
+- [ ] AI-generated misinformation
+
+### Extend 
 - [ ] To other types of media: image, audio, video, etc.
 - [ ] Shall we try to answer questions if provided.
 - [ ] Multi-language support.
 - [ ] Add logging and long-term memory.
 - [ ] Integrate with other fact-check services.
-
-## Calculate
-- [ ] Shall we calculate percentage of true and false in the input? Any better calculation than items count?
-
-## Logging
-- [ ] Full logging on chain of events for re-producing and debugging.
-
-## Checkout
-- [ ] Chroma #retrieve
-
-## Issues
-- [ ] Uses many different types of models, difficult for performance optimization and maintenance.
-- [ ] LLM verdict wrong contradict to context provided.
-
-## Research
-- [ ] AI-generated misinformation
