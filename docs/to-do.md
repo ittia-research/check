@@ -1,9 +1,25 @@
+## Goals
+This topic is very complicated. Here we try to define some clean goals:
+- Ability to fact-check given information.
+- A open source database of facts, with connections and hierarchy between facts. Build a foundation.
+- Open access tools for real-time fact-checking.
+- Broad media entity quality assess, including social media.
+- Enrich first-hand facts. Make facts afloat.
+
 ## Roadmap
 - [ ] Check one line of single statement.
 - [ ] Check long paragraphs or a content source (URL, file, etc.)
   - [ ] What's the ultimate goals?
 - [ ] Long-term memory and caching.
 - [ ] Fact-check standards and database.
+
+## Alphabet
+context:
+  - Every sides (it's question and answer in QA setup) has context.
+  - There might be multiple points, for example social context.
+  - It can be commonly accepted knowledge or extra facts.
+
+- [ ] How to handle context in RAG? Needs to ensure integrity.
 
 ## Work
 ### Frontend
@@ -76,3 +92,13 @@ DSPy
 - [ ] Multi-language support.
 - [ ] Add logging and long-term memory.
 - [ ] Integrate with other fact-check services.
+ 
+### Legal
+- [ ] Copyright: citations, etc.
+
+## Considerations
+RAG:
+  - Order-Preserve RAG
+
+## References
+- [ ] https://github.com/ICTMCG/LLM-for-misinformation-research
