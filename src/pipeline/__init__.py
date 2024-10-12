@@ -111,6 +111,7 @@ class Check():
 
         if not self.statements:
             raise HTTPException(status_code=500, detail="No statements found")
+        self.statements = self.statements[:2]  # TODO: limiting max statements to 2 since haven't support long input yet.
         logging.info(f"statements: {self.statements}")
         
         # add statements to data with order
